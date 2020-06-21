@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<!-- 配置 映射哪个文件 --> 
+<mapper namespace="dao.imp.IUserDao">
+	
+	<!-- 配置方法:查询所有 -->
+	<select id="findAll" resultType="bean.User">
+		select * from user
+	</select>
+	
+	<select id="findOne" parameterType="bean.User" resultType="bean.User">
+		select * from user where username = #{username}
+		<if test="id != null">
+			and id = 41
+		</if>
+	</select>
+</mapper>

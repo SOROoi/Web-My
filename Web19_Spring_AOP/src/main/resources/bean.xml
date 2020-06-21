@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd">
+        
+        <bean id="service" class="wxt.service.Service"></bean>
+        
+        <bean id="tongzhi" class="wxt.tongzhi.TongZhi"></bean>
+        
+        <aop:config>
+        	<!-- 1配置切面、2该切面的id、3使用哪个bean 作为通知类-->
+        	<aop:aspect id="morningAdvice" ref="tongzhi">
+        		<!-- 1通知类型：增强在什么位置、2使用该通知bean 的什么方法、3给谁增强 -->
+        		<aop:before method="morning" pointcut="execution(public void wxt.service.Service.all())"></aop:before>
+        	</aop:aspect>
+        </aop:config>
+
+</beans>

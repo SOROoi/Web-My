@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx.xsd">
+	
+	<!-- 开启注解IOC -->
+	<context:component-scan base-package="wxt" />
+	
+	<!-- 注入数据源 -->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.cj.jdbc.Driver"></property>
+		<property name="url" value="jdbc:mysql://localhost:3306/18mybatis?serverTimezone=UTC"></property>
+		<property name="username" value="root"></property>
+		<property name="password" value="root"></property>
+	</bean>
+	
+	<!-- 注入SqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"> 
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<!-- mybatis扫描的dao包 -->
+	<bean id="mapScanner" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="wxt.dao"></property>
+	</bean>
+	
+	<!-- 注入事务管理器 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<!-- 开启注解事务支持 -->
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	
+	
+	<!-- AOP 增强 -->
+	<aop:config>
+		<aop:pointcut id="pt1" expression="execution(* wxt.service.imp.*.*(..))" />
+		<aop:aspect ref="advice">
+			<aop:before method="before" pointcut-ref="pt1"/>
+			<aop:after-returning method="after" pointcut-ref="pt1"/>
+		</aop:aspect>
+	</aop:config>
+	
+</beans>

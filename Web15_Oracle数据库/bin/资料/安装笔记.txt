@@ -1,0 +1,65 @@
+第一天:
+	1.Oracle概念和安装
+	2.基本查询
+	3.条件查询
+	4.Oracle中的函数
+	
+第二天:******
+	1.多表查询
+	2.子查询
+	
+第三天:
+	表空间的概念
+	用户
+	视图
+	索引
+	序列
+	同义词
+	PLSQL编程
+
+第四天:
+	1.PLSQL编程
+	2.游标
+	3.存储过程
+	4.存储函数
+	5.触发器
+	
+Oracle的OCA认证
+
+
+Oracle : 数据库 , 4  2000美元  1200美元60%  程序员 写数据 ,读出数据
+处理大量数据
+IBM公司发表一篇论文, R关系型数据库模型
+埃里森: 
+
+为什么要学习Oracle:
+mysql : 开源免费的数据库, 中小型企业, 				淘宝网 mysql集群
+Oracle: 收费的数据库, 国企, 金融, 银行, 证券,保险 , 京东             按CPU核数, 一核=永久使用费用 18万. 
+
+
+Oracle虚拟机安装:
+	1. 先安装 vm wareworkstation
+	2. 双击纯净版中的 xp_oracle.vmx文件
+	3. 关闭防火墙
+	
+配置网络:
+	1. 编辑 ----> 添加虚拟网络
+	2. 设置虚拟机网络为固定IP地址
+	3. 测试网络是否ping通
+	
+Oracle软件安装:
+	1.将Oracle拖到虚拟机中
+	2.安装数据库软件
+	3.解锁Scott和HR账户
+	4.配置Oracle的地址为固定IP地址
+	5.重启Listener 和 ORCL服务
+	6.客户端测试访问ORACLE
+	
+PLSQLDevelop的安装: (注意:安装在没有中文,没有空格的路径下)
+	1.先安装instantclient
+	2.配置tools --> preferences --> 配置instantclient的路径
+	3.将前面步骤中tnsnames.ora 文件拷贝到本机, 配置TNS_ADMIN环境变量
+	4.重启PLSQLDevelop
+	5.输入用户名和密码测试
+
+

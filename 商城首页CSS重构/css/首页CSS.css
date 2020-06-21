@@ -1,0 +1,122 @@
+/*<!--CSS层叠样式表代码-->*/
+<style>
+	body {
+		font-family: "微软雅黑";
+	}
+	
+	#frame {
+		height: 2122px;
+		width: 1300px;
+		margin: auto;
+	}
+	
+	a {
+		text-decoration: none;
+		color: black;
+	}
+	
+	.div1 {
+		height: 59px;
+		width: 431px;
+		float: left;
+	}
+	
+	#register {
+		height: 37px;
+		width: 180px;
+		padding-top: 22px;
+		padding-left: 252px;
+	}
+	
+	#clear {
+		clear: both;
+	}
+	
+	.div2 {
+		background-color: black;
+		height: 59px;
+		width: 650px;
+		float: left;
+	}
+	/*选择器的名字前不能加数字，否则代码就会失效
+	 *比如我刚刚写的2right就完全没有反应
+	 * */
+	
+	#right {
+		height: 47px;
+		width: 250px;
+		padding-left: 398px;
+		padding-top: 12px;
+	}
+	
+	ul li {
+		display: inline;
+		color: white;
+	}
+	
+	#shouye {
+		font-size: 20px;
+	}
+	
+	.div3 {
+		margin-top: 20px;
+		height: 670px;
+		width: 1300px;
+	}
+	
+	#top {
+		height: 30px;
+		width: 1280px;
+		padding-left: 20px;
+		margin-bottom: 5px;
+	}
+	
+	#bottom {
+		height: 475px;
+		width: 1300px;
+	}
+	
+	#bottom-big {
+		height: 475px;
+		width: 206px;
+		padding-right: 60px;
+		float: left;
+	}
+	
+	#bottom-right {
+		height: 236px;
+		width: 459px;
+		padding-right: 60px;
+		float: left;
+	}
+	
+	.small {
+		height: 236px;
+		width: 169px;
+		float: left;
+		/*让里面的内容居中*/
+		text-align: center;
+	}
+	
+	#small {
+		padding-left: 10px;
+	}
+	
+	.div5 {
+		height: 135.3px;
+		width: 1300px;
+	}
+	
+	.div7 {
+		height: 75.4px;
+		width: 1300px;
+	}
+	.div8{
+		height: 81px;
+		width: 1300px;
+		text-align: center;
+	}
+	/*img{
+		border: 1px solid black;
+	}*/
+</style>

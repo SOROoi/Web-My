@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>隔行换色</title>
+		<script>
+			//高亮显示-tr元素-鼠标进入onmouseover事件-函数
+			function mousein(id) {
+				var tr = document.getElementById(id);
+				tr.style.backgroundColor = "navajowhite";
+			}
+			//高亮显示-tr元素-鼠标离开onmouseout事件-函数
+			function mouseout(id) {
+				var tr = document.getElementById(id);
+				if(id % 2 == 0) {
+					tr.style.backgroundColor = "ghostwhite";
+				} else {
+					tr.style.backgroundColor = "honeydew";
+				}
+			}
+			//隔行换色-body元素-页面加载onload事件-函数
+			function changeColor() {
+				//trs为tbody元素
+				var trs = document.getElementById("tbody");
+				for(var i = 0; i < trs.rows.length; i++) {
+					if(i % 2 == 0) {
+						//#tbody.rows为tbody中所有行的数组
+						trs.rows[i].style.backgroundColor = "ghostwhite";
+					} else {
+						trs.rows[i].style.backgroundColor = "honeydew";
+					}
+				}
+			}
+			//全选-input-checkBox元素-鼠标单击onclick事件-函数
+			function allMark(){
+				//获取全选框的元素及状态
+				var alch = document.getElementById("allCheck");
+				//复选框alch.checked为checkBox的状态，状态类型为false或true
+				var alchValue = alch.checked;
+				//得到所有子复选框的集合
+				var sonches = document.getElementsByClassName("check");
+				//判断全选框是否勾选。是，则将子复选框勾选；否，则将子复选框取消勾选
+				if(alchValue == true){
+					for(var i = 0; i <sonches.length;i++){
+						sonches[i].checked = true;
+					}
+				}else{
+					for(var i = 0; i <sonches.length;i++){
+						sonches[i].checked = false;
+					}
+				}
+			}
+		</script>
+		
+		<style>
+			thead {
+				background-color: gold;
+			}
+			
+			tbody {
+				background-color: honeydew;
+			}
+			table{
+				margin-top: 100px;
+			}
+		</style>
+	</head>
+
+	<body onload="changeColor()">
+		<table width="500px" height="100px" align="center" >
+			<thead>
+				<tr>
+					<th>
+						<input type="checkbox" onclick="allMark()" id="allCheck"/>
+					</th>
+					<th>
+						姓名
+					</th>
+					<th>
+						年龄
+					</th>
+					<th>
+						成绩
+					</th>
+				</tr>
+			</thead>
+			<tbody style="text-align: center;" id="tbody">
+				<tr id="0" onmouseover="mousein('0')" onmouseout="mouseout('0')">
+					<td>
+						<input type="checkbox" class="check"/>
+					</td>
+					<td>
+						张三
+					</td>
+					<td>
+						18
+					</td>
+					<td>
+						578
+					</td>
+				</tr>
+				<tr id="1" onmouseover="mousein('1')" onmouseout="mouseout('1')">
+					<td>
+						<input type="checkbox" class="check"/>
+					</td>
+					<td>
+						李四
+					</td>
+					<td>
+						19
+					</td>
+					<td>
+						642
+					</td>
+				</tr>
+				<tr id="2" onmouseover="mousein('2')" onmouseout="mouseout('2')">
+					<td>
+						<input type="checkbox" class="check"/>
+					</td>
+					<td>
+						王五
+					</td>
+					<td>
+						17
+					</td>
+					<td>
+						598
+					</td>
+				</tr>
+				<tr id="3" onmouseover="mousein('3')" onmouseout="mouseout('3')">
+					<td>
+						<input type="checkbox" class="check"/>
+					</td>
+					<td>
+						小六
+					</td>
+					<td>
+						18
+					</td>
+					<td>
+						558
+					</td>
+				</tr>
+				<tr id="4" onmouseover="mousein('4')" onmouseout="mouseout('4')">
+					<td>
+						<input type="checkbox" class="check"/>
+					</td>
+					<td>
+						田七
+					</td>
+					<td>
+						19
+					</td>
+					<td>
+						523
+					</td>
+				</tr>
+				<tr id="5" onmouseover="mousein('5')" onmouseout="mouseout('5')">
+					<td>
+						<input type="checkbox" class="check"/>
+					</td>
+					<td>
+						胡八
+					</td>
+					<td>
+						17
+					</td>
+					<td>
+						488
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</body>
+
+</html>

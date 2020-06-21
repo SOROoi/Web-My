@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>注册页面</title>
+		<!--
+        	作者：wxt
+        	时间：2019-04-6
+        	描述：使用jQuery来重构注册页面
+        	注意：
+        	   -1.jQuery页面加载函数：$(function(){
+        	   						 代码;
+        	   						});
+        	   					或：  $(document).ready(function(){
+        	   						 代码；
+        	   						});
+        	   		//jQuery中多个页面加载函数可以共存，按照先后顺序执行
+        	   		//Javascript中多个页面加载函数不可共存，后面的加载函数会覆盖前面的
+        	   		//jQuery页面加载函数与Javascript页面加载函数可以共存，执行顺序为jQuery先执行JS后执行
+        	   			//因为jQuery是在DOM绘制完毕后即执行，JS需要等到图片等加载完毕后才执行
+        	   			
+        		0.jQuery中对象转DOM对象：	$("div")[0]   //jQuery对象内部以数组方式存放所有的匹配数据，如果只匹配到一个，索引号为0
+        		   
+        		  DOM中对象转jQuery对象：	$(DOM对象) 或  jQuery(DOM对象)
+        		  //jQuery对象和DOM对象，API不能互相调用  
+        		1.jQuery中选择器：
+        			    基本选择器：
+        						$("#id值")			//id选择器
+        						$("标签名")			//元素选择器
+        						$(".类名")			//类选择器（类名即class属性名）
+        				 通配符：$("*")				//所有元素
+        			    层级选择器：
+        			    		$("a b")			//获得a标签内所有的b标签对象--后代
+        			    		$("a > b")			//获得a标签下一级所有的b标签对象--儿子
+        			    		$("a + b")			//获得a标签同级的下一个b标签对象--同桌
+        			    		$("a ~ b")			//获得a标签同级的所有b标签对象--兄弟
+        			    基本过滤选择器：
+        			    		:first		//$("div:first")	//第一个div元素 
+								:last 		//$("div:last")		//最后一个div元素
+								:not 		//$("input:not(:checked)")		//查找所有未选中的 input 元素
+								:even 		//$("div:even")		//索引值为偶数的div元素，从 0 开始计数
+								:odd 		//$("div:odd")		//索引值为奇数的div元素，从 0 开始计数
+								:eq 		//$("tr:eq(1)")		//匹配一个给定索引值的元素
+								:gt 		//$("tr:gt(0)")		//匹配所有大于给定索引值的元素
+								:lt 		//$("tr:lt(2)")		//匹配所有小于给定索引值的元素
+								:header 	//$(":header").css("background", "#EEE");	//给页面内所有标题加上背景色
+								:animated 	//$("#run").click(function(){		//只有对不在执行动画效果的元素执行一个动画特效
+ 												 $("div:not(:animated)").animate({ left: "+=20" }, 1000);
+												});
+        			   属性选择器：
+								[attribute] 	//$("div[id]")		//查找所有含有 id 属性的 div 元素
+								[attribute=value] 	//$("div[id='two']")	//查找所有id属性的值为two的div元素
+        			   表单选择器：   		
+        			    		:input 		//$(":input")		//查找所有input元素
+								:text 		//$(":text")		//查找所有文本框
+
+        		2.jQuery中没有JS的创造节点功能,所以创造节点只能使用js
+        		3.jQuery中添加节点的 $("n").append("..")方法和JS中n.appendChild()效果相同，
+        											即：在n对象标签内容中的末尾追加".."内容。
+        			但是：jquery的n.append("..")可以添加节点对象(转换成jQ对象)和字符串，
+        										若该对象存在于html文件中，则移动该对象。
+        				  JS的n.appendChild()只能添加节点，若想追加内容则可先创建节点，节点对象.innerHTML="",再添加节点。
+        		  jQuery中设置HTML内容：	$("n").html("<b>Hi</b>")
+        		  JS中设置HTML内容：		document.getElementById("n").innerHTML="<b>Hi</b>"
+        		4.jQuery中的事件名比JS中少一个on，如:onblur(JS)--blur(jQuery)
+        		5.jQuery中$("n").empty()--清空所有n标签中的所有子元素，执行后n存在
+        				  $("n").remove()--删除n标签中所有子元素及n标签，执行后n不存在
+        		6.jQuery中
+        			(可遍历元素)遍历方式一：	$("img").each(function(i){			//i为索引
+ 								 				this.src="test"+i+".jpg";		//此处this为DOM对象而非jQuery对象       			
+        									});
+        	  (可遍历数组和元素)遍历方式二：	$.each(元素,function(i,n){		//i为索引，n为每个索引对应的元素DOM对象(数组内容)
+        										alert(""+i+n);
+        				    				});
+        		7.jQuery中获取属性：$("img").attr("src")
+        				    设置属性：$("img").attr("src","C:\Users\asus pc\Desktop\黑马32期\WEB05_jQuery基础")
+        		8.jQuery中设置样式：$("div").css("background-color","pink");
+        		9.jQuery中方法	val()-------------获得value属性的值
+        						val(...)----------给value属性设置值
+        						
+        						attr(name)--------获取属性name
+        						attr(properties)--设置多个属性
+        						
+        						html()------------获得html代码，如有标签，一并获得
+        						html(...)---------设置html代码，如有标签，将进行解析
+        						
+        						text()------------获得文本，如有标签，忽略
+        						text(...)---------设置文本，如有标签，不进行解析，原样输出
+        						
+        		10.jQuery中绑定事件	
+        						$("#foo").bind("click", function() {	//为id为foo的元素绑定了一个单击事件
+ 									alert("User clicked on foo");		
+								});
+							(依次可以绑定多个事件类型，每个事件类型用空格分隔)
+								$('#foo').bind('mouseenter mouseleave', function() {	
+  									$(this).toggleClass('entered');		//这个代码让一个<div id="foo">元素（初始情况下 
+								});															class没有设置成entered）
+																		当鼠标移进去的时候，在class中加上entered，
+																		而当鼠标移出这个div的时候，则去除这个class值。
+        		11.jQuery中模仿悬停事件的方法--hover(over, out)
+        						$("td").hover(					//当鼠标移动到一个匹配的元素上面时，会触发指定的第一个函数。
+ 									function () {							   当鼠标移出这个元素时，会触发指定的第二个函数。		
+ 										$(this).addClass("hover");
+ 									},function () {
+ 										$(this).removeClass("hover");
+ 									}
+ 								);
+        		12.jQuery中每次点击后依次调用函数的方法--toggle(fn, fn2, [fn3, fn4, ...])
+								$("td").toggle(					//如果点击了一个匹配的元素，则触发指定的第一个函数，
+									function () {						当再次点击同一元素时，则触发指定的第二个函数，
+										$(this).addClass("selected");	    如果有更多函数，则再次点击再次触发，直到最后一个。
+									},function () {
+										$(this).removeClass("selected");
+									}
+								);
+				13.jQuery中的表单校验插件--validation校验
+					13.1.导入插件
+						//引入validate插件js文件
+						<script type="text/javascript" src="../js/jquery.validate.min.js" ></script>
+						//引入国际化js文件
+						<script type="text/javascript" src="../js/messages_zh.js" ></script>
+					13.2.声明对哪个表单进行校验
+						$(function(){
+							$("#registForm").validate({
+								rules:{
+									user:{			//表单中该input标签中的name="user"  表示输入用户名
+										required:true,
+									},
+									password:{
+										required:true,
+										rangelength:[6,10],
+									},
+									repassword:{
+										equalTo:"[name='password']"
+									},
+								},
+								messages:{
+									user:{
+										required:"用户名不能为空",		//不符合要求时的提示信息
+									},
+									password:{
+										required:"密码不能为空",
+										rangelength:"密码长度要求在6-10位之间",
+									},
+									repassword:{
+										equalTo:"两次输入不相同",
+									},
+								},
+							});
+						});
+					13.3.使用validation插件,无需在input标签后加span标签提示
+					13.4.性别单选框的校验提示较特别，需要在提示位置加入label标签
+						(需要在label位置显示错误信息
+							*class必须是error
+							* for必须设置为错误对象的name
+							* 为了使之刚开始不显示，syle设置"display:none")
+						<input type="radio" name="sex" value="男"/>男
+						<input type="radio" name="sex" value="女"/>女<em></em>
+						<label for="sex" class="error" style="display: none;"></label>
+					13.5还需添加这些代码来创建提示信息
+						errorElement: "label", //用来创建错误提示信息标签,validate插件默认的就是label
+						success: function(label) { //验证成功后的执行的回调函数
+							//label指向上面那个错误提示信息标签label
+							label.text(" ") //清空错误提示消息
+							.addClass("success"); //加上自定义的success类
+						}
+        -->
+		<script src="js/jquery-1.8.3.js"></script>
+		<script type="text/javascript" src="js/jquery.validate.min.js" ></script>
+		<script type="text/javascript" src="js/messages_zh.js" ></script>
+		<script>
+			//jQuery不需要提交表单绑定的函数tsubmit()，无需在input标签后加span标签提示,使用validation插件即可
+			$(function(){
+				$("#reForm").validate({
+					rules:{
+						user:{
+							required:true,
+						},
+						password:{
+							required:true,
+							rangelength:[6,10],
+						},
+						repassword:{
+							required:true,
+							equalTo:"[name=password]",
+						},
+						email:{
+							required:true,
+							email:email,
+						},
+						sex:{
+							required:true,
+						},
+					},
+					messages:{
+						user:{
+							required:"用户名不可为空",
+						},
+						password:{
+							required:"密码不可为空",
+							rangelength:"密码长度需在6-10位之间",
+						},
+						repassword:{
+							required:"请确认密码",
+							equalTo:"两次密码不一致",
+						},
+						email:{
+							required:"邮箱不能为空",
+							email:"邮箱格式不正确",
+						},
+						sex:{
+							required:"性别不可为空",
+						},
+					},
+					errorElement: "label", //用来创建错误提示信息标签,validate插件默认的就是label
+					success: function(label) { //验证成功后的执行的回调函数
+						//label指向上面那个错误提示信息标签label
+						label.text(" ") //清空错误提示消息
+							.addClass("success"); //加上自定义的success类
+					}
+				});
+			});
+		</script>
+		<script>
+			var city = new Array(34);
+			city[0] = new Array("1");
+			city[1] = new Array("东城区", "西城区", "崇文区", "宣武区", "朝阳区", "丰台区", "石景山区", "海淀区门", "头沟区",
+				"房山区", "通州区", "顺义区", "昌平区", "大兴区", "怀柔区", "平谷区", "密云县", "延庆县");
+			city[2] = new Array("黄浦区", "卢湾区", "徐汇区", "长宁区", "静安区", "普陀区", "闸北区", "虹口区", "杨浦区", "闵行区",
+				"宝山区", "嘉定区", "浦东新区", "金山区", "松江区", "青浦区", "南汇区", "奉贤区", "崇明县");
+			city[3] = new Array("和平区", "河东区", "河西区", "南开区", "河北区", "红桥区", "塘沽区", "汉沽区", "大港区", "东丽区",
+				"西青区", "津南区", "北辰区", "武清区", "宝坻区", "宁河县", "静海县", "蓟县");
+			city[4] = new Array("万州区", "涪陵区", "渝中区", "大渡口", "区江北区", "沙坪坝区", "九龙坡区", "南岸区", "北碚区", "万盛区", "双桥区",
+				"渝北区", "巴南区", "黔江区", "长寿区", "江津区", "合川区", "永川区", "南川区", "綦江县", "潼南县", "铜梁县", "大足县", "荣昌县",
+				"璧山县", "梁平县", "城口县", "丰都县", "垫江县", "武隆县", "忠县", "开县", "云阳县", "奉节县", "巫山县", "巫溪县",
+				"石柱土家族自治县", "秀山土家族苗族自治县", "酉阳土家族苗族自治县", "彭水苗族土家族自治县");
+			city[5] = new Array("哈尔滨市", "齐齐哈尔市", "鸡西市", "鹤岗市", "双鸭山市", "大庆市", "伊春市",
+				"佳木斯市", "七台河市", "牡丹江市", "黑河市", "绥化市", "大兴安岭地区");
+			city[6] = new Array("长春市", "吉林市", "四平市", "辽源市", "通化市", "白山市松原市", "白城市", "延边朝鲜族自治州");
+			city[7] = new Array("沈阳市", "大连市", "鞍山市", "抚顺市", "本溪市", "丹东市", "锦州市", "营口市", "阜新市", "辽阳市", "盘锦市",
+				"铁岭市", "朝阳市", "葫芦岛市");
+			city[8] = new Array("济南市", "青岛市", "淄博市", "枣庄市", "东营市", "烟台市", "潍坊市", "济宁市", "泰安市", "威海市",
+				"日照市", "莱芜市", "临沂市", "德州市", "聊城市", "滨州市", "菏泽市");
+			city[9] = new Array("太原市", "大同市", "阳泉市", "长治市", "晋城市", "朔州市",
+				"晋中市", "运城市", "忻州市", "临汾市", "吕梁市");
+			city[10] = new Array("西安市", "铜川市", "宝鸡市", "咸阳市", "渭南市", "延安市",
+				"汉中市", "榆林市", "安康市", "商洛市");
+			city[11] = new Array("石家庄市", "唐山市", "秦皇岛市", "邯郸市", "邢台市", "保定市",
+				"张家口市", "承德市", "沧州市", "廊坊市", "衡水市");
+			city[12] = new Array("郑州市", "开封市", "洛阳市", "平顶山市", "安阳市", "鹤壁市", "新乡市", "焦作市", "济源市",
+				"濮阳市许昌市", "漯河市", "三门峡市", "南阳市", "商丘市", "信阳市", "周口市", "驻马店市");
+			city[13] = new Array("武汉市", "黄石市", "十堰市", "宜昌市", "襄樊市", "鄂州市", "荆门市", "孝感市", "荆州市", "黄冈市",
+				"咸宁市", "随州市", "恩施土家族苗族自治州", "仙桃市", "潜江市", "天门市", "神农架林区");
+			city[14] = new Array("长沙市", "株洲市", "湘潭市", "衡阳市", "邵阳市", "岳阳市", "常德市", "张家界市",
+				"益阳市", "郴州市", "永州市", "怀化市", "娄底市", "湘西土家族苗族自治州");
+			city[15] = new Array("海口市", "三亚市", "五指山市", "琼海市", "儋州市", "文昌市", "万宁市", "东方市", "定安县", "屯昌县澄迈县",
+				"临高县", "白沙黎族自治县", "昌江黎族自治县", "乐东黎族自治县陵水黎族自治县", "保亭黎族苗族自治县", "琼中黎族苗族自治县");
+			city[16] = new Array("南京市", "无锡市", "徐州市", "常州市", "苏州市", "南通市", "连云港市", "淮安市",
+				"盐城市", "扬州市", "镇江市", "泰州市", "宿迁市");
+			city[17] = new Array("南昌市", "景德镇市", "萍乡市", "九江市", "新余市", "鹰潭市", "赣州市", "吉安市", "宜春市", "抚州市", "上饶市");
+			city[18] = new Array("广州市", "韶关市", "深圳市", "珠海市", "汕头市", "佛山市", "江门市", "湛江市", "茂名市", "肇庆市", "惠州市",
+				"梅州市", "汕尾市", "河源市", "阳江市", "清远市", "东莞市", "中山市", "潮州市", "揭阳市", "云浮市");
+			city[19] = new Array("南宁市", "柳州市", "桂林市", "梧州市", "北海市", "防城港市", "钦州市", "贵港市", "玉林市", "百色市", "贺州市",
+				"河池市", "来宾市", "崇左市");
+			city[20] = new Array("昆明市", "曲靖市", "玉溪市", "保山市", "昭通市", "丽江市", "思茅市", "临沧市", "楚雄彝族自治州",
+				"红河哈尼族彝族自治州", "文山壮族苗族自治州", "西双版纳傣族自治州", "大理白族自治州", "德宏傣族景颇族自治州", "怒江傈僳族自治州",
+				"迪庆藏族自治州");
+			city[21] = new Array("贵阳市", "六盘水市", "遵义市", "安顺市", "铜仁地区", "毕节地区", "黔西南布依族苗族自治州",
+				"黔东南苗族侗族自治州", "黔南布依族苗族自治州");
+			city[22] = new Array("成都市", "自贡市", "攀枝花市", "泸州市", "德阳市", "绵阳市", "广元市", "遂宁市", "内江市", "乐山市", "南充市",
+				"眉山市", "宾市", "广安市", "达州市", "雅安市", "巴中市", "资阳市", "阿坝藏族羌族自治州", "甘孜藏族自治州",
+				"凉山彝族自治州");
+			city[23] = new Array("呼和浩特市", "包头市", "乌海市", "赤峰市", "通辽市", "鄂尔多斯市", "呼伦贝尔市",
+				"巴彦淖尔市", "乌兰察布市", "兴安盟", "锡林郭勒盟", "阿拉善盟");
+			city[24] = new Array("银川市", "石嘴山市", "吴忠市", "固原市", "中卫市");
+			city[25] = new Array("兰州市", "嘉峪关市", "金昌市", "白银市", "天水市", "武威市", "张掖市", "平凉市",
+				"酒泉市", "庆阳市", "定西市", "陇南市", "临夏回族自治州", "甘南藏族自治州");
+			city[26] = new Array("西宁市", "海东地区", "海北藏族自治州", "黄南藏族自治州", "海南藏族自治州",
+				"果洛藏族自治州", "玉树藏族自治州", "海西蒙古族藏族自治州");
+			city[27] = new Array("拉萨市", "昌都地区", "山南地区", "日喀则地区", "那曲地区", "阿里地区", "林芝地区");
+			city[28] = new Array("乌鲁木齐市", "克拉玛依市", "吐鲁番地区", "哈密地区", "昌吉回族自治州", "博尔塔拉蒙古自治州",
+				"巴音郭楞蒙古自治州", "阿克苏地区", "克孜勒苏柯尔克孜自治州", "喀什地区和田地区", "伊犁哈萨克自治州", "塔城地区",
+				"阿勒泰地区", "石河子市阿拉尔市", "图木舒克市五家渠市");
+			city[29] = new Array("合肥市", "芜湖市", "蚌埠市", "淮南市", "马鞍山市", "淮北市", "铜陵市", "安庆市",
+				"黄山市", "滁州市", "阜阳市", "宿州市", "巢湖市", "六安市", "亳州市", "池州市", "宣城市");
+			city[30] = new Array("杭州市", "宁波市", "温州市", "嘉兴市", "湖州市", "绍兴市", "金华市", "衢州市", "舟山市", "台州市", "丽水市");
+			city[31] = new Array("福州市", "厦门市", "莆田市", "三明市", "泉州市", "漳州市", "南平市", "龙岩市", "宁德市");
+			city[32] = new Array("台北市", "高雄市", "基隆市", "台中市", "台南市", "新竹市", "嘉义市");
+			city[33] = new Array("中西区", "湾仔区", "东区", "南区", "油尖旺区", "深水埗区", "九龙城区", "黄大仙区", "观塘区",
+				"荃湾区", "葵青区", "沙田区", "西贡区", "大埔区", "北区", "元朗区", "屯门区", "离岛区");
+			city[34] = new Array("澳门");
+			//注意！
+			//jQ中在使用city[a]时,其中的a变量必须被定义为数字，即var a = 1;
+			//					如果a定义为其他对象时，将会发生错误，如var a = this.value;
+
+			$(function() {
+				
+				$("#province").change(function() {
+					//获取省份复选框的值value
+					var proValue = $(this).val();
+					//9.清空城市的复选框元素的option内容
+					//$("#city").empty();
+					$("#city>option").remove();
+					
+					//这段代码无法运行
+//					var cities = city[proValue];
+//					$(cities).each(function(i){
+//						$("#city").append("<option>"+cities[i]+"</option>");
+//					});
+
+					if(proValue != 0) {
+						//通过省份value得到该省份下的市的数组,遍历
+						for(var i = 1; i < 35; i++) {
+							if(i==proValue){
+								//方式一：第一种遍历
+								$(city[i]).each(function(j){
+									$("#city").append("<option>"+city[i][j]+"</option>");
+								});
+								//方式二：第二种遍历
+//								$.each(city[i], function(j,n) {
+//									$("#city").append("<option>"+n+"</option>");
+//								});
+								//方式三：for循环
+//								for (var j = 0;j<city[i].length;j++) {
+//									$("#city").append("<option>"+city[i][j]+"</option>");
+//								}
+							}
+						}
+					} else {
+						$("#city").append("<option>---请选择---</option>");
+					}
+				});
+			});
+		</script>
+		<style>
+			h1 {
+				font-size: small;
+			}
+			
+			label.error{
+				background:url(img/unchecked.gif) no-repeat 10px 3px;
+				padding-left: 30px;
+				font-family:georgia;
+				font-size: 13px;
+				font-style: normal;
+				color: red;
+			}
+			
+			label.success{
+				background:url(img/checked.gif) no-repeat 10px 3px;
+				padding-left: 30px;
+			}
+			
+			.td {
+				width:200px;
+				text-align: right;
+				margin-right:20px;
+				color: #666;
+				font-size: 14px;
+			}
+			
+			.title{
+				color: #666;
+			}
+			
+			#city {
+				width: 145px;
+			}
+			
+			#div{
+				margin: auto;		/*元素整体居中*/
+				width: 700px;
+				border: 2px solid #F0F0F0;
+			}
+		</style>
+	</head>
+
+	<body>
+		<table align="center" width="1300px" cellpadding="0px" cellspacing="0px">
+			<!--1.logo部分 -->
+			<tr>
+				<td>
+					<!--嵌套一个一行三列的表格-->
+					<table width="100%">
+						<tr height="50px">
+							<td width="33.3%">
+								<img src="img/logo2.png" height="47px" />
+							</td>
+							<td width="33.3%">
+								<img src="img/header.png" height="47px" />
+							</td>
+							<td>
+								<a href="#">登录</a>
+								<a href="#">注册</a>
+								<a href="#">购物车</a>
+							</td>
+							<td>
+								<h1>CSS优先级</h1>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<!--2.导航栏部分-->
+			<tr height="50px">
+				<td bgcolor="black">
+					&nbsp;&nbsp;&nbsp;&nbsp;
+					<a href="#">
+						<font size="5" color="white">首页</font>
+					</a> &nbsp;&nbsp;&nbsp;&nbsp;
+					<a href="#">
+						<font color="white">手机数码</font>
+					</a>&nbsp;&nbsp;&nbsp;&nbsp;
+					<a href="#">
+						<font color="white">电脑办公</font>
+					</a>&nbsp;&nbsp;&nbsp;&nbsp;
+					<a href="#">
+						<font color="white">鞋靴箱包</font>
+					</a>&nbsp;&nbsp;&nbsp;&nbsp;
+					<a href="#">
+						<font color="white">家用电器</font>
+					</a>
+				</td>
+			</tr>
+			<!--3.注册表单-->
+			<tr>
+				<td height="600px" background="img/regist_bg.jpg">
+					<!--嵌套一个十行二列的表格-->
+					<form action="#" method="post" name="regForm" id="reForm">
+						<div id="div">
+						<table width="700px" height="470px" align="center" cellpadding="0px" cellspacing="0px" bgcolor="white" >
+							<tr height="40px">
+								<td class="title" colspan="2" align="center">
+									<font size="5">会员注册 </font>
+									<font size="3">USER REGISTER</font>
+								</td>
+
+							</tr>
+							<tr>
+								<td class="td" align="center">
+									用户名&nbsp;&nbsp;
+									<em style="color: red;">*</em>&nbsp;&nbsp;
+								</td>
+								<td>
+									<input type="text" name="user" size="34px" id="user" onblur="out('user','用户名不能为空')" placeholder="请输入用户名" />
+								</td>
+							</tr>
+							<tr>
+								<td class="td"  align="center">
+									密码&nbsp;&nbsp;
+									<em style="color: red;">*</em>&nbsp;&nbsp;
+								</td>
+								<td>
+									<input type="password" name="password" size="34px" id="key" onblur="out('key','密码不能为空')" placeholder="请输入密码(密码长度为8-16个字符)" />
+								</td>
+							</tr>
+							<tr>
+								<td class="td"  align="center">
+									确认密码&nbsp;&nbsp;
+									<em style="color: red;">*</em>&nbsp;&nbsp;
+								</td>
+								<td>
+									<input type="password" name="repassword" size="34px" id="check" onblur="out('check','')" placeholder="请确认密码" />
+								</td>
+							</tr>
+							<tr>
+								<td class="td"  align="center">
+									Email&nbsp;&nbsp;
+									<em style="color: red;">*</em>&nbsp;&nbsp;
+								</td>
+								<td>
+									<input type="text" name="email" size="34px" id="email" onblur="out('email','邮箱不能为空')" placeholder="请输入您的邮箱" />
+								</td>
+							</tr>
+							<tr>
+								<td class="td"  align="center">
+									姓名&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								</td>
+								<td>
+									<input type="text" name="username" size="34px" />
+								</td>
+							</tr>
+							<tr>
+								<td class="td"  align="center">
+									性别&nbsp;&nbsp;
+									<em style="color: red;">*</em>&nbsp;&nbsp;
+								</td>
+								<td>
+									<input type="radio" name="sex" value="男" />男
+									<input type="radio" name="sex" value="女" />女
+									<label for="sex" class="error" style="display: none;"></label>
+								</td>
+							</tr>
+							<tr>
+								<td class="td"  align="center">
+									居住地&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								</td>
+								<td>
+									<select id="province" ">
+										<option value="0 ">---请选择---</option>
+										<option value="1 ">北京</option>
+										<option value="2 ">上海</option>
+										<option value="3 ">天津</option>
+										<option value="4 ">重庆</option>
+										<option value="5 ">黑龙江</option>
+										<option value="6 ">吉林</option>
+										<option value="7 ">辽宁</option>
+										<option value="8 ">山东</option>
+										<option value="9 ">山西</option>
+										<option value="10 ">陕西</option>
+										<option value="11 ">河北</option>
+										<option value="12 ">河南</option>
+										<option value="13 ">湖北</option>
+										<option value="14 ">湖南</option>
+										<option value="15 ">海南</option>
+										<option value="16 ">江苏</option>
+										<option value="17 ">江西</option>
+										<option value="18 ">广东</option>
+										<option value="19 ">广西</option>
+										<option value="20 ">云南</option>
+										<option value="21 ">贵州</option>
+										<option value="22 ">四川</option>
+										<option value="23 ">内蒙古</option>
+										<option value="24 ">宁夏</option>
+										<option value="25 ">甘肃</option>
+										<option value="26 ">青海</option>
+										<option value="27 ">西藏</option>
+										<option value="28 ">新疆</option>
+										<option value="29 ">安徽</option>
+										<option value="30 ">浙江</option>
+										<option value="31 ">福建</option>
+										<option value="32 ">台湾</option>
+										<option value="33 ">香港</option>
+										<option value="34 ">澳门</option>
+									</select>
+									
+									<select id="city">
+										<option>---请选择---</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td class="td" align="center ">
+									出生日期&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								</td>
+								<td>
+									<input type="text " name="birthday " size="34px " />
+								</td>
+							</tr>
+							<tr>
+								<td class="td" align="center ">
+									验证码&nbsp;&nbsp;
+									<em style="color: red;">*</em>&nbsp;&nbsp;
+								</td>
+								<td>
+									<input type="text " name="yzm " />
+									<img src="img/yanzhengma.png " />
+								</td>
+							</tr>
+							<tr>
+								<td width="270px" align="center "></td>
+								<td colspan="2 ">
+									<input type="submit" value="注册 " />
+									<input type="reset" value="重置 " id="cz"/>
+								</td>
+							</tr>
+						</table>
+						</div>
+					</form>
+				</td>
+			</tr>
+			<!--4.广告图片-->
+			<tr>
+				<td>
+					<img src="img/footer.jpg " width="100% " />
+				</td>
+			</tr>
+			<!--5.友情链接和版权信息-->
+			<tr>
+				<td align="center ">
+					<a href="# ">关于我们</a>
+					<a href="# ">联系我们</a>
+					<a href="# ">招贤纳士</a>
+					<a href="# ">法律声明</a>
+					<a href="# ">友情链接</a>
+					<a href="# ">支付方式</a>
+					<a href="# ">配送方式</a>
+					<a href="# ">服务声明</a>
+					<a href="# ">广告声明</a>
+					<p>
+						Copyright © 2005-2016 传智商城 版权所有
+					</p>
+				</td>
+			</tr>
+		</table>
+	</body>
+
+</html>

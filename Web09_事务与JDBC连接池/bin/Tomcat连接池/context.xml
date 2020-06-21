@@ -1,0 +1,13 @@
+<!-- name为连接池名称 -->
+
+<Context>
+	 <Resource name="jdbc/EmployeeDB" auth="Container"	
+            type="javax.sql.DataSource"
+            username="root"
+            password="root"
+            driverClassName="com.mysql.jdbc.Driver"
+            url="jdbc:mysql://localhost:3306/day16"
+            initialSize="10"
+            maxActive="30"
+            maxIdle="4"/>
+</Context>

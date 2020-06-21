@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/security          
+    	http://www.springframework.org/schema/security/spring-security.xsd">
+    
+    <context:component-scan base-package="wxt">
+    	<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>    
+    
+    
+    <!-- 配置视图解析器 -->
+    <bean id="internalResourceViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    	<property name="prefix" value="/pages/"></property>
+    	<property name="suffix" value=".jsp"></property>
+    </bean>
+	
+	<!-- 过滤静态资源 -->
+	<mvc:resources location="/css/" mapping="/css/**"></mvc:resources>
+	<mvc:resources location="/img/" mapping="/img/**"></mvc:resources>
+	<mvc:resources location="/js/" mapping="/js/**"></mvc:resources>
+	<mvc:resources location="/plugins/" mapping="/plugins/**"></mvc:resources>
+	
+	<!-- 自定义类型转换器 -->
+	<bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+		<property name="converters">
+			<set>
+				<bean class="converter.StringToDate"></bean>
+			</set>
+		</property>
+	</bean>
+	
+	<!-- 开启注解mvc支持 -->
+	<mvc:annotation-driven conversion-service="conversionService"></mvc:annotation-driven>
+	
+	<!-- 通知spring使用cglib而不是jdk的来生成代理方法 AOP	可以拦截到Controller -->
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+	
+	
+	<!-- 开启 方法级权限控制注解 	三种注解：JSR-250注解、@Secured注解、支持表达式的注解
+    		若 权限注解 写在 Controller中，将这条配置移到 spring-mvc.xml中，且需要 spring-mvc.xml引入 security约束，	
+    		否则 权限注解 无效-->
+    <security:global-method-security jsr250-annotations="enabled" secured-annotations="enabled" pre-post-annotations="enabled"></security:global-method-security>
+   
+</beans>

@@ -1,0 +1,20 @@
+基本信息设置
+    1.设置用户名：		git config --global user.name 'SOROoi'
+    2.设置用户名邮箱：	git config --global user.email '545772909@qq.com'
+    3.查看设置：		git config --list
+    4.查看本地仓库的文件：	git ls-files
+    5.查看提交记录：		git log
+    6.撤销暂存区文件：	git reset HEAD 文件
+    7.撤销工作区内容：	git checkout -- 文件
+
+0.下载项目到本地：		git clone https://github.com/用户名/仓库名.git
+1.变成git可以管理的本地仓库：	git init
+2.所有文件提交到暂存区：	git add .
+3.暂存区文件提交到本地仓库：	git commit -m '描述'
+4.查看本地仓库状态：		git status
+
+5.连接 GitHub 远程库(需SSH)：	git remote add origin git@github.com:用户名/远程库名.git
+6.清除连接的远程库：		git remote rm origin
+
+7.当前分支master同步到远程仓库：git push -u origin master
+8.后续同步：		git push origin master

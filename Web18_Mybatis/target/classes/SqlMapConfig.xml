@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration  
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+  
+  <!-- mybatis主配置文件 -->
+  <configuration>
+  	<!-- 配置环境 -->
+  	<environments default="mysql">
+  		<!-- 配置 mysql 环境 -->
+  		<environment id="mysql">
+  			<!-- 配置事务的类型 -->
+  			<transactionManager type="JDBC"></transactionManager>
+  			<!-- 配置数据源/连接池 -->
+  			<dataSource type="POOLED">
+  				<!-- 配置连接数据库的4个基本信息 -->
+  				<property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+  				<property name="url" value="jdbc:mysql://localhost:3306/18mybatis?serverTimezone=UTC"/>
+  				<property name="username" value="root"/>
+  				<property name="password" value="root"/>
+  			</dataSource>
+  		</environment>
+  	</environments>
+  	
+  	<!-- 指定映射配置文件的位置，映射配置文件指的是每个dao独立的配置文件
+  	
+  		XML方式引入：			<mappers>
+						        <mapper resource="com/yhl/mybatis/mapper/UserMapper.xml"/>
+						    </mappers>
+  	
+  		注解引入：	此处应该使用class属性  指定被注释的dao全限定类名
+							<mappers>
+					  			<mapper class="dao.imp.IUserDao"/>
+					  		</mappers>  	
+  		
+  		扫描有注解的dao包/dao映射配置文件所在位置：
+							<mappers>
+						        <package name="com.itheima.dao"></package>
+						    </mappers> 
+  	 -->
+  	<mappers>
+  		<package name="dao.imp"></package>
+  	</mappers>
+  </configuration>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+	<!--配置代理的service -->
+	<bean id="proxyAccountService" factory-bean="beanFactory"
+		factory-method="getAccountService"></bean>
+
+
+	<!--配置beanfactory -->
+	<bean id="beanFactory" class="wxt.factory.BeanFactory">
+		<!-- 注入service -->
+		<property name="accountService" ref="accountService"></property>
+		<!-- 注入事务管理器 -->
+		<property name="txManager" ref="txManager"></property>
+	</bean>
+
+	<!-- 配置Service -->
+	<bean id="accountService"
+		class="wxt.service.impl.AccountServiceImpl">
+		<!-- 注入dao -->
+		<property name="accountDao" ref="accountDao"></property>
+	</bean>
+
+	<!--配置Dao对象 -->
+	<bean id="accountDao" class="wxt.dao.impl.AccountDaoImpl">
+		<!-- 注入QueryRunner -->
+		<property name="runner" ref="runner"></property>
+		<!-- 注入ConnectionUtils -->
+		<property name="connectionUtils" ref="connectionUtils"></property>
+	</bean>
+
+	<!--配置QueryRunner -->
+	<bean id="runner" class="org.apache.commons.dbutils.QueryRunner"
+		scope="prototype"></bean>
+
+	<!-- 配置数据源 -->
+	<bean id="dataSource"
+		class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<!--连接数据库的必备信息 -->
+		<property name="driverClass" value="com.mysql.cj.jdbc.Driver"></property>
+		<property name="jdbcUrl"
+			value="jdbc:mysql://localhost:3306/19spring?serverTimezone=UTC"></property>
+		<property name="user" value="root"></property>
+		<property name="password" value="root"></property>
+	</bean>
+
+	<!-- 配置Connection的工具类 ConnectionUtils -->
+	<bean id="connectionUtils" class="wxt.utils.ConnectionUtils">
+		<!-- 注入数据源 -->
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+
+	<!-- 配置事务管理器 -->
+	<bean id="txManager" class="wxt.utils.TransactionManager">
+		<!-- 注入ConnectionUtils -->
+		<property name="connectionUtils" ref="connectionUtils"></property>
+	</bean>
+
+	<!-- 配置通知类 -->
+	<bean id="shiwuAdvice" class="wxt.advice.ShiwuAdvice">
+		<!-- 注入事务管理器 -->
+		<property name="txManager" ref="txManager"></property>
+	</bean>
+
+	<!-- 配置AOP -->
+	<aop:config>
+		<aop:pointcut id="pointcut1" expression="execution(* wxt.service.impl.*.*(..))"></aop:pointcut>
+		<aop:aspect id="shiwu" ref="shiwuAdvice">
+			<aop:before method="startShiwu" pointcut-ref="pointcut1"></aop:before>
+			<aop:after-returning method="commitShiwu" pointcut-ref="pointcut1"></aop:after-returning>
+			<aop:after-throwing method="exceptionShiwu" pointcut-ref="pointcut1"></aop:after-throwing>
+			<aop:after method="finallyShiwu" pointcut-ref="pointcut1"></aop:after>
+		</aop:aspect>
+	</aop:config>
+
+</beans>
