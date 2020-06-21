@@ -38,6 +38,7 @@ package git的使用;
 			如：git remote add origin git@github.com:SOROoi/Demo.git
 		
 		(清除连接的远程库：git remote rm origin)
+		(查看远程库详情：	git remote -v)
 		
 	5.同步到 GitHub 仓库，把当前分支master同步到远程仓库。第一次同步执行此命令。
 		git push -u origin master
