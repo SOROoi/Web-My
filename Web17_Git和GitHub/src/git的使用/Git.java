@@ -55,17 +55,23 @@ package git的使用;
 	        后续同步：
 	    git push origin master
         
-            强制发布-无视冲突：
+            强制发布-无视冲突：(上传笔记)
         git push -f origin master
         
         
         
-    5.将远程主机origin的master分支与本地的master分支合并
+    5.将远程主机origin的master分支与本地的master分支合并(开发项目时)
         git pull origin master
 		
+     .若无冲突:
+        1.拉取远程分支的内容：
+            git pull origin master
+            
+        2.发布到远程分支
+            git push origin master
         
-     .若有冲突，解决冲突：(远程文件与本地内容不同时)
-     
+        
+     .若有冲突，解决冲突：(远程文件与本地内容不同时)  
         1.拉取远程分支的内容：
             git pull origin master
             
