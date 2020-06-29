@@ -18,26 +18,29 @@ package git的使用;
 /*						Git本地仓库同步到远程库
  	本地有更新，上传到github仓库：
  	
- 	0.将GitHub上的项目下载到本地
+ 	-1.将GitHub上的项目下载到本地
  		git clone https://github.com/用户名/仓库名.git
+        
+     .git拉取远程指定分支下代码（-b  分支名称）
+        git clone -b v2.8.1 https://xxx.git
 
-	1.(进入项目文件夹) 变成git可以管理的本地仓库								--变成git可以管理的本地仓库(目录中的文件需要commit后才真正存入本地仓库)
+	0.(进入项目文件夹) 变成git可以管理的本地仓库								--变成git可以管理的本地仓库(目录中的文件需要commit后才真正存入本地仓库)
 		git init	(每创建一个本地仓库，执行一次)
 		
-	2.把文件添加到暂存区中,不要忘记后面的小数点“.”，意为添加文件夹下的所有文件	--添加到暂存区
+	1.把文件添加到暂存区中,不要忘记后面的小数点“.”，意为添加文件夹下的所有文件	--添加到暂存区
 		git add .
 		git add 文件夹/ 
 		
 	 .撤销暂存区文件
 	 	git reset
 		
-	3.用命令 git commit -m添加到本地仓库，末尾提交说明					--把暂存区文件提交到本地仓库
+	2.用命令 git commit -m添加到本地仓库，末尾提交说明					--把暂存区文件提交到本地仓库
 		git commit -m '描述'
 		
 	 .查看目录中 是否还有文件 未添加到仓库					--查看本地仓库状态(未添加仓库的文件名 是红色--工作区/绿色--暂存区)
 		git status
 		
-	4.连接 GitHub 远程库	(GitHub添加本地SSH密钥后	即可连接)
+	3.连接 GitHub 远程库	(GitHub添加本地SSH密钥后	即可连接)
 		git remote add origin git@github.com:用户名/远程库名.git		如：git remote add origin git@github.com:SOROoi/Demo.git
 			
 	 .清除连接的远程库：
@@ -46,13 +49,39 @@ package git的使用;
 	 .查看远程库详情：
 	 	git remote -v
 		
-	5.同步到 GitHub 仓库，把当前分支master同步到远程仓库。第一次同步执行此命令。
+	4.同步到 GitHub 仓库，把当前分支master同步到远程仓库。第一次同步执行此命令。
 		git push -u origin master
 	   
 	        后续同步：
 	    git push origin master
+        
+            强制发布-无视冲突：
+        git push -f origin master
+        
+        
+        
+    5.将远程主机origin的master分支与本地的master分支合并
+        git pull origin master
 		
-	
+        
+     .若有冲突，解决冲突：(远程文件与本地内容不同时)
+     
+        1.拉取远程分支的内容：
+            git pull origin master
+            
+        2.修改冲突的文件：
+            删除不需要的内容：<<<<<<< HEAD ======= >>>>>>>
+            替换为需要的内容：00000本地
+        
+        3.将修改后的文件，添加到本地仓库
+            git add .
+            git commit -m '修改完成'
+         
+        4.发布到远程分支
+            git push origin master
+    
+    
+    
 						GitHub添加本地SSH密钥(SSH加密传输)
 	1.创建SSH Key:
 		1.在用户主目录(C:\Users\asus pc)下，看看有没有.ssh目录，
