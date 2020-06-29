@@ -17,7 +17,7 @@ public interface IOrderService {
 	 * @return
 	 * @throws Exception
 	 */
-	List<Order> findAll() throws Exception;
+	List<Order> findAll(String username) throws Exception;
 	
 	/**
 	 * 分页
@@ -27,7 +27,7 @@ public interface IOrderService {
 	 * @return
 	 * @throws Exception
 	 */
-	List<Order> findAll(int page,int size) throws Exception;
+	List<Order> findAll(int page,int size,String username) throws Exception;
 	
 	/**
 	 * 根据ID查询 订单详情(Order)
@@ -36,4 +36,15 @@ public interface IOrderService {
 	 * @throws Exception
 	 */
 	Order findById(String id) throws Exception;
+	
+	
+	/*
+	 * 添加订单
+	 */
+	void addOrder(Order order) throws Exception;
+	
+	/*
+	 * 删除订单
+	 */
+	void deleteOrder(String orderId) throws Exception;
 }

@@ -1,6 +1,7 @@
 package wxt.bean;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -20,17 +21,18 @@ public class Order implements Serializable {
 	private static final long serialVersionUID = -2095442909029336433L;
 	private String id;						//主键uuid
 	private String orderNum;				//订单编号 不为空 唯一
-	private Date orderTime;					//下单时间
+	private Timestamp orderTime;					//下单时间
 	private String orderTimeStr;			
-	private int orderStatus;				//订单状态(0 未支付 1 已支付)
+	private Integer orderStatus;				//订单状态(0 未支付 1 已支付)
 	private String orderStatusStr;
-	private int peopleCount;				//出行人数
+	private Integer peopleCount;				//出行人数
 	private Product product;				//产品bean
 	private List<Traveller> travellers;		//旅客List
 	private Member member;					//会员bean
 	private Integer payType;				//支付方式(0 支付宝 1 微信 2其它)
 	private String payTypeStr;
 	private String orderDesc;				//订单描述
+	private String userid;					//用户id 外键
 
 	public String getId() {
 		return id;
@@ -48,11 +50,11 @@ public class Order implements Serializable {
 		this.orderNum = orderNum;
 	}
 
-	public Date getOrderTime() {
+	public Timestamp getOrderTime() {
 		return orderTime;
 	}
 
-	public void setOrderTime(Date orderTime) {
+	public void setOrderTime(Timestamp orderTime) {
 		this.orderTime = orderTime;
 	}
 
@@ -90,12 +92,17 @@ public class Order implements Serializable {
 		this.orderStatusStr = orderStatusStr;
 	}
 
-	public int getPeopleCount() {
+	public Integer getPeopleCount() {
 		return peopleCount;
 	}
 
-	public void setPeopleCount(int peopleCount) {
-		this.peopleCount = peopleCount;
+	public void setPeopleCount(Integer peopleCount) {
+		if(peopleCount != null) {
+			this.peopleCount = peopleCount;
+		}else {
+			this.peopleCount = 0;
+		}
+		
 	}
 
 	public Product getProduct() {
@@ -156,6 +163,14 @@ public class Order implements Serializable {
 
 	public void setOrderDesc(String orderDesc) {
 		this.orderDesc = orderDesc;
+	}
+
+	public String getUserid() {
+		return userid;
+	}
+
+	public void setUserid(String userid) {
+		this.userid = userid;
 	}
 
 }

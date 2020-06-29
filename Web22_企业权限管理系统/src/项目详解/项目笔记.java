@@ -8,6 +8,19 @@ package 项目详解;
 	
 	2.登陆SSM用户，创建产品表
 		表名：product	（见 --SSM环境搭建与产品操作.pdf）
+			
+			CREATE TABLE product(
+				id varchar2(32) default SYS_GUID() PRIMARY KEY,
+				productNum VARCHAR2(50) NOT NULL,
+				productName VARCHAR2(50),
+				cityName VARCHAR2(50),
+				DepartureTime timestamp,
+				productPrice Number,
+				productDesc VARCHAR2(500),
+				productStatus INT,
+				CONSTRAINT product UNIQUE (id, productNum)
+			);
+
 		
 		问题：	Oracle中唯一性约束：	CONSTRAINT product UNIQUE (id, productNum) 的含义？
 		含义：	此唯一约束表示，id 和 productNum ，不能都相同。
@@ -57,6 +70,28 @@ package 项目详解;
 					2.如 service层：applicationContext-service.xml，配置：IOC扫包、spring事务
 					3.如 web层：	springmvc.xml，					配置：过滤静态资源、视图解析器、IOC扫包、注解MVC
 								web.xml						配置：DispatcherServlet、乱码过滤器、spring监听器、spring配置文件路径
+	
+	(用户添加角色)
+	8.将多个网页参数 绑定到String[]中。
+		JSP页中：	<c:forEach items="${itemList }" var="item">
+		            	<tr>
+		           			<td><input type="checkbox" name="ids" value="${item.id}"/></td>
+						</tr>
+            		</c:forEach>
+            		
+		Controller中：
+					public String deleteItem(Integer[] ids){	//方法中用String[]接收，网页参数名=方法参数名
+						...
+					}
+	
+	(用户添加角色)
+	9.dao方法中传入多个参数，需要加 @Param 注解。
+		dao中：		@Insert("insert into users_role values(#{userId},#{roleId})")
+					public void addRoleToUser(@Param("userId")String user, @Param("roleId")String role) throws Exception;
+		
+		解释:		用 @Param注解，将方法参数 与sql中参数，关联起来。
+		
+
 							
 */
 
@@ -75,8 +110,34 @@ package 项目详解;
 			1.为 href="xx" 时，	默认访问 web项目   /xx 映射：		http://localhost:8080/项目名/xx
 			2.为 href="/xx" 时，	默认访问 主机名下  /xx 项目：		http://localhost:8080/xx
 			
+			
 	3.前端页面 <button>按钮跳转
 			<button type="button" onclick="location.href='../pages/product-add.jsp'">新建</button>
+		
+			
+			
+	4.SpringMVC框架提供的转发和重定向
+
+		1.手动跳转：关键字 forward 请求转发:	return "forward:/xx/yy.jsp"(默认web应用目录下)
+		
+				例：		@RequestMapping(path="/5")	
+						public String test5() {
+							return "forward:/WEB-INF/pages/success.jsp";			--跳转到页面success.jsp
+						}
+						
+						1.forward:xx			--跳转到 同控制器下 方法
+						2.forward:/xx			--跳转到 web应用下: /xx	(可访问/WEB-INF 中资源)
+
+		2.手动跳转：关键字 redirect 重定向:		return "redirect:/xx/yy.jsp"(默认web应用目录下/con1/下,框架内部封装了项目名/类映射名/)
+			
+				例：		@RequestMapping(path="/6")	
+						public String test6() {
+							return "redirect:5";			--跳转到 本控制器中 @RequestMapping("/5") 方法
+						}
+						
+						1.redirect:xx			--跳转到 同控制器下 方法
+						2.redirect:/xx			--跳转到 web应用下: /xx	(不可访问/WEB-INF 中资源)
+						3.redirect:http//xx		--支持跳转绝对路径
  */
 
 
@@ -177,7 +238,10 @@ package 项目详解;
 
 /*									Spring Security--权限操作	
  				(如果访问的网址是 不被权限控制的 则直接显示，否则跳转到 登陆页面login-page(见配置文件))
- 
+ 				1.无需拦截的资源
+ 				2.访问需要的权限/角色
+ 				3.登陆页面、登录请求、登陆成功页、登陆失败页
+ 				4.UserDetailsService接口
 		
 		0.使用 Security框架后，访问流程：
 		
@@ -190,10 +254,16 @@ package 项目详解;
 						2.执行 user-service-ref(配置) 中 loadUserByUsername()方法，通过username,得到数据库中 User信息。
 						3.比较表单密码 与 User密码；通过后，判断 User角色权限 是否为 access(配置)，
 						4.都通过后，跳转到 default-target-url页面(配置)
+
+
+	
+		1.security框架中获得 User对象：
+				SecurityContext context = SecurityContextHolder.getContext();
+				User user = (User)(context.getAuthentication().getPrincipal());
 		
 		
 		
-		1.使用 Spring Security 流程：
+		2.使用 Spring Security 流程：
 			1.导入依赖：	1.spring-security-web，
 						2.spring-security-config.
 						
@@ -242,7 +312,7 @@ package 项目详解;
 							如： List<Role> roles =  userInfo.getRoles();
 							装入 new SimpleGrantedAuthority("ROLE_"+role.getRoleName());
 							
-					4.装入 User：	(UserDetailsService 实现类)			
+					4.装入 User：	(UserDetails 实现类)			
 							//已配置加密方式
 							new User(username,userInfo.getPassword(),userInfo.getStatus()==0 ? false : true,
 										...List<SimpleGrantedAuthority>);
@@ -279,27 +349,7 @@ package 项目详解;
 			使用 BCryptPasswordEncoder加密后，使用账户：wxt 密码：123456 将无法登陆。为此添加一个初始账户：www 密码：123456
 		
 	
-	(用户添加角色)
-	7.将多个网页参数 绑定到String[]中。
-		JSP页中：	<c:forEach items="${itemList }" var="item">
-		            	<tr>
-		           			<td><input type="checkbox" name="ids" value="${item.id}"/></td>
-						</tr>
-            		</c:forEach>
-            		
-		Controller中：
-					public String deleteItem(Integer[] ids){	//方法中用String[]接收，网页参数名=方法参数名
-						...
-					}
-	
-	(用户添加角色)
-	8.dao方法中传入多个参数，需要加 @Param 注解。
-		dao中：		@Insert("insert into users_role values(#{userId},#{roleId})")
-					public void addRoleToUser(@Param("userId")String user, @Param("roleId")String role) throws Exception;
-		
-		解释:		用 @Param注解，将方法参数 与sql中参数，关联起来。
-		
-		
+			
 */
 
 

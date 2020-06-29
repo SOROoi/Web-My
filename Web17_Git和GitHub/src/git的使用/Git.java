@@ -26,6 +26,10 @@ package git的使用;
 		
 	2.把文件添加到暂存区中,不要忘记后面的小数点“.”，意为添加文件夹下的所有文件	--添加到暂存区
 		git add .
+		git add 文件夹/ 
+		
+	 .撤销暂存区文件
+	 	git reset
 		
 	3.用命令 git commit -m添加到本地仓库，末尾提交说明					--把暂存区文件提交到本地仓库
 		git commit -m '描述'
@@ -34,11 +38,13 @@ package git的使用;
 		git status
 		
 	4.连接 GitHub 远程库	(GitHub添加本地SSH密钥后	即可连接)
-		git remote add origin git@github.com:用户名/远程库名.git		
-			如：git remote add origin git@github.com:SOROoi/Demo.git
+		git remote add origin git@github.com:用户名/远程库名.git		如：git remote add origin git@github.com:SOROoi/Demo.git
+			
+	 .清除连接的远程库：
+	 	git remote rm origin
 		
-		(清除连接的远程库：git remote rm origin)
-		(查看远程库详情：	git remote -v)
+	 .查看远程库详情：
+	 	git remote -v
 		
 	5.同步到 GitHub 仓库，把当前分支master同步到远程仓库。第一次同步执行此命令。
 		git push -u origin master
@@ -82,10 +88,17 @@ package git的使用;
   	3.查看提交记录
   		git log
   		
-  	4.撤销暂存区文件：如果不指定文件名，则撤销add的所有文件
-  		git reset HEAD 文件
+  	4.禁止 Git自动将windows 换行符CRLF 转为 Linux下 换行符LF	(用来解决：The file will have its original line endings in your working directory)
+  		git config --global core.autocrlf false
   		
-  	5.撤销工作区内容
+  	5.解决中文文件名 乱码问题：
+  		git config --global core.quotepath false
+  	
+  	6.撤销暂存区文件：如果不指定 文件名，则撤销add的所有文件
+  		git reset HEAD 文件
+  		git reset 			(add的全部撤销)
+  		
+  	7.撤销工作区内容
 		git checkout -- 文件
 		
 		(命令git checkout -- readme.txt意思就是，把readme.txt文件在工作区的修改全部撤销，这里有两种情况：

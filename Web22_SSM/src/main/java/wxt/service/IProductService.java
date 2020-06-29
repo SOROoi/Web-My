@@ -13,5 +13,9 @@ public interface IProductService {
 
 	List<Product> findAll(int page, int size) throws Exception;
 	
+	List<Product> findAll() throws Exception;
+	
+	Product findById(String id) throws Exception;
+	
 	void save(Product product) throws Exception;
 }

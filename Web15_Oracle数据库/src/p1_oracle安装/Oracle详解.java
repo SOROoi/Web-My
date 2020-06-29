@@ -118,9 +118,11 @@ package p1_oracle安装;
             2.逻辑运算符:  and or not
             3.其它运算符:
                            like 模糊查询
+                           between..and.. 在某个区间内
                            in() 在某个集合内
                            not in() 不在某个集合里
-                           between..and.. 在某个区间内
+                           >any() 大于任何一个
+                           >all() 大于所有
                            is null  判断为空
                            is not null 判断不为空
                            
@@ -206,12 +208,16 @@ package p1_oracle安装;
                         select avg(comm) from emp;           --错误,统计忽略了没有奖金的员工
                         select sum(comm)/count(1) from emp;  --正确
                 
-        5.2 单行函数(运算)：
+        5.2 数值函数(运算)：
                 ceil(i)：    -向上取整
                 floor(i)：   -向下取整
                 round(i,b)： -四舍五入,保留b位小数
                 trunc(i,b)： -截断,保留b位小数
                 mod(i,b):    -求i/b余数
+                
+                abs(i):		-求绝对值
+                sqrt(i):	-求平方根
+                sin(i):		-求三角函数，i为弧度
                 
                     5.2.1 对i向上取整: 
                         select ceil(45.926) from dual;   --46
@@ -240,10 +246,19 @@ package p1_oracle安装;
                         select mod(9,4) from dual; --1
                 
         5.3 字符函数(单行)
-                substr(str,i,n):    --对str字符串进行截取,从索引i开始,截取n个字符).  注意:起始索引不管写0、1都是从第一个字符开始截取                      
+                substr(str,i,n):    --对str字符串进行截取,从索引i开始,截取n个字符).  
+                						注意:起始索引不管写0、1都是从第一个字符开始截取                      
+                							i若为-1，表示倒数第一个字符
                 length(str)：       --获取str的长度
                 trim(str)：         --去除str两端的空格
+                ltrim(c1,c2)	--从c1中去除左第一个c2字符
+                rtrim(c1,c2)
                 replace(str,s1,s2)  --将str中的s1替换为s2
+                
+                upper(str)			--将str转为大写
+                lower(str)			--将str转为小写
+                initcap(str)		--将str首字母大写
+                concat(str1,str2)	--将str1、str2拼接
                 
                     5.3.1 截取'abcdefg'中3个字符：
                         select substr('abcdefg',0,3) from dual; --abc
@@ -262,8 +277,11 @@ package p1_oracle安装;
         5.4 日期函数(单行)   
                 sysdate:                          --查询今天的日期  
                 add_months(sysdate,3):            --查询三个月后今天的日期
-                sysdate + 3：                     --查询3天后的日期
+                sysdate + 3：                 		    --查询3天后的日期
                 months_between(sysdate,hiredate)  --查询两个日期之间的月份
+                next_day(sysdate,'monday')		--下一个'str'(星期几)的日期
+                last_day(sysdate)				--这个月最后一天的日期
+                extract(year from sysdate)		--返回日期对应 年/月/日 (year month day)
             
                     5.4.1 查询今天的日期
                         select sysdate from dual;
@@ -294,14 +312,15 @@ package p1_oracle安装;
                  比如凌晨1点2分，HH:mm显示为01:02，H:m显示为1:2    ）
             
         5.5 转换函数  
-                to_number(str):                          --字符转数值        //鸡肋，默认帮助转换
+                to_number(str,'$9999'):                  --字符转数字     
                 to_date('2017-04-10','yyyy-mm-dd')       --字符转日期
-                to_char(i):                              --数值转字符      
+                to_char(i,'$99999'):                     --数字转字符      
                 to_char(sysdate,'yyyy-mm-dd hh:mi:ss')   --日期转字符
                 
-                    5.5.1 字符转数值：
-                        select 100+'10' from dual;                 --110  默认转换
-                        select 100 + to_number('10') from dual;    --110
+                    5.5.1 字符转数字：
+                        select 100+'10' from dual;                 		--110  默认转换
+                        select 100 + to_number('10') from dual;    		--110
+                        select to_number('$1000','$9999') from dual;	--1000	去除其他符号转为数字
                     
                     5.5.2 字符转日期
                         select to_date('2017-04-10','yyyy-mm-dd') from dual;
@@ -309,7 +328,7 @@ package p1_oracle安装;
                     5.5.3 查询1981年到1985年入职的员工信息
                         select * from emp where hiredate between to_date('1981','yyyy') and to_date('1985','yyyy');   
                         
-                    5.5.4 数值转字符：
+                    5.5.4 数字转字符：	(9表示数字，0表示用0补齐，$美元符号，S加正负号)
                         select to_char(sal,'$9,999.99') from emp;
                         select to_char(sal,'L9,999.99') from emp;  --转换为本地货币符号
                                                                     //to_char(1210.73, '9999.9')    返回 '1210.7' 
@@ -524,7 +543,7 @@ package p1_oracle安装;
                               where e1.deptno = t1.deptno and e1.sal = t1.minsal and e1.deptno = d1.deptno;    
                 
                 3.2 多行子查询
-                        多行数据比较符:   in()             --在其中都匹配               ！使用多行子查询,代表子查询结果存有多行数据
+                        多行数据比较符:   			  in()             --在其中都匹配               ！使用多行子查询,代表子查询结果存有多行数据
                                           not in()         --不在其中的都匹配
                                           >any()           --只要大于其中一个的就匹配
                                           >all()           --大于其中所有的才匹配
@@ -725,9 +744,13 @@ package p1_oracle安装;
                           default tablespace 表空间的名称          -- default tablespace handong;
                           
         2.3 给用户授权  
-                  语法：  grant 角色 | 权限  to 用户               -- grant connect to dakang;  //授予 connect角色，登陆权限
-                                                                   -- grant dba to dakang;      //授予 dba角色，所有权限
-                                                                                                //resource角色，一般为开发人员权限
+                  语法：  grant 角色 | 权限  to 用户             
+                    -- grant connect to dakang;  //授予 connect角色，登陆权限
+                    -- grant dba to dakang;      //授予 dba角色，所有权限
+                    -- grant resource to B;      //授予 resource角色，一般为开发人员权限
+                    -- grant create view to B;   //授予 创建视图权限 
+                    -- grant select any table to B;   //授予 查询任一表权限 
+                                                                                                
         2.4 删除表空间
                   语法:   drop tablespace handong;
                   
@@ -740,8 +763,18 @@ package p1_oracle安装;
                              列名  列的类型 [列的约束],
                              列名  列的类型  [列的约束]      
                            );
+              
+              CREATE TABLE product(
+				id varchar2(32) default SYS_GUID() PRIMARY KEY,		
+				productNum VARCHAR2(50) NOT NULL,
+				DepartureTime timestamp,
+				productPrice Number,
+				productStatus INT,
+				CONSTRAINT product UNIQUE (id, productNum)
+			  );
+			  		--SYS_GUID(): 生成32位的唯一编码，生成唯一主键。插入时无需id列，类型为varchar2(32).
                   
-                  列的类型:
+                  数据类型:
                           varchar               在Oracle中,目前是支持的, 但是不保证以后还支持
                           varchar2(长度)        可变字符长度         varchar2(10)  hello  占5个字符
                           char(长度)				固定长度字符		char(10)      hello  占10个字符,用空格填充
@@ -765,41 +798,41 @@ package p1_oracle安装;
                           
                   表的五大约束
                            列的约束: 约束主要是用来约束表中数据的规则
-                           主键约束: primary key 不能为空, 必须唯一
-                           非空约束：not null
+                          1. 主键约束: primary key 不能为空, 必须唯一
+                          2. 非空约束：not null
                            
-                           唯一约束：unique
-                                    写法一：(表级约束)
-							：列1 数据类型,
-							: constraint 约束名 unique(列1),
+                          3. 唯一约束：unique
+                                    1.写法一：(表级约束)
+							            : 列1 数据类型,
+							            : constraint 约束名 unique(列1),
                                             
-                            name varchar2(20),
-                            constraint un_name unique(name),
+			                            name varchar2(20),
+			                            constraint un_name unique(name),
                                     
-	                                    问题：Oracle中唯一性约束：CONSTRAINT product UNIQUE (id, productNum) 的含义？
-	                                    含义：此唯一约束表示，id 和 productNum ，不能都相同。
+	                                   . 问题：Oracle中唯一性约束：CONSTRAINT product UNIQUE (id, productNum) 的含义？
+	                                   . 含义：此唯一约束表示，id 和 productNum ，不能都相同。
 	                                            (唯一性约束指表中一个字段或者多个字段联合起来能够唯一标识一条记录的约束。联合字段中，可以包含空值。)
                                     
                                     
-                           检查约束：check(条件)  在mysql中是可以写的,但是mysql直接忽略了检查约束
+                          4. 检查约束：check(条件)  在mysql中是可以写的,但是mysql直接忽略了检查约束
                                      -- check( gender in ('男','女','人妖'))
                                      
                                      
-                           外键约束:主要是用来约束从表A中的记录,必须是存在于主表B中
+                          5. 外键约束:主要是用来约束从表A中的记录,必须是存在于主表B中
                            
-                                    写法一：(列级约束)
-							：外键列1 数据类型 references 主表(主表列),
+                                   1. 写法一：(列级约束)
+										：外键列1 数据类型 references 主表(主表列),
+			                                            
+										depart_no number references depart(no),
                                             
-							depart_no number references depart(no),
-                                            
-                                    写法二：(表级约束)
-	 						：外键列1 数据类型,
-							：constraint 约束名 foreign key(外键列1) references 主表(主表列) [on delete cascade],
-                                            
-							depart_no varchar(10),
-							constraint fk_deptno foreign key (depart_no) references depart(no),
+                                   2. 写法二：(表级约束)
+				 						：外键列1 数据类型,
+										：constraint 约束名 foreign key(外键列1) references 主表(主表列) [on delete cascade],
+			                                            
+										depart_no varchar(10),
+										constraint fk_deptno foreign key (depart_no) references depart(no),
                                            
-                                    注意：1.主表列 必须为主表的主键。
+                                   3. 注意：1.主表列 必须为主表的主键。
                                           2.外键列 数据类型必须和主表主键一致。
                                           3.外键列字段的值必须来源于主表中相应字段的值，或者为null
                                           4.先创建主表，再创建从表
@@ -910,9 +943,10 @@ package p1_oracle安装;
             Oracle默认不开启自动提交，
             MySQL 默认开启自动提交。
                             
-            事务的保存点/回滚点:  savepoint 回滚点;
-            回滚:                 rollback to 回滚点;
-            提交 :                commit;
+            1.事务的保存点/回滚点:    savepoint 回滚点;
+            2.回滚:                 rollback to 回滚点;	
+            						rollback;
+            3.提交 :                 commit;
             
             5.1 开启事务插入数据
                 create table louti(
@@ -941,9 +975,9 @@ package p1_oracle安装;
                 
     6. 视图view:
             视图：1.是对查询结果的一个封装
-                  2.能够封装复杂的查询结果
-                  3.屏蔽表中的细节
-                  (视图里面所有的数据,都是来自于它查询的那张表,视图本身不存储任何数据)
+                  2.能够封装复杂的查询结果，屏蔽表中的细节
+                  3.视图数据,都是来自于它查询的那张表，原表数据改变视图也会变化
+                   (视图本身不存储任何数据)
                   
             语法: create [or replace] view 视图的名称 as 查询语句 [ with read only]  
             
@@ -974,7 +1008,7 @@ package p1_oracle安装;
             6.3 查看视图
                 select * from view_test1;
                 
-            6.4 同义词的概念
+            6.4 同义词的概念(可以对数据库中对象-table-view，定义同义词名)
                 create synonym dept for view_test1;
 
                 create synonym yuangong for view_test2;
@@ -987,10 +1021,10 @@ package p1_oracle安装;
                 drop view view_test1;
                 
     7.序列sequence:
-            序列:生成类似于 auto_increment 这种ID自动增长 1,2,3,4,5....的数据
+           1. 序列:生成类似于 auto_increment 这种ID自动增长 1,2,3,4,5....的数据
                   (auto_increment, mysql中的)
 
-            语法:
+           2. 语法:
                    create sequence 序列名
                    start with 几开始
                    increment by 每次增长多少
@@ -999,12 +1033,14 @@ package p1_oracle安装;
                    cycle | nocycle  是否循环    1,2,3,1,2,3
                    cache 缓存的数量3 | nocache  1,2,3,4,5,6 
                
-            从序列获取值
-                   currval : 当前值	
+           3. 从序列获取值
+                   currval : 当前值		--currval 需要在调用nextval之后才能使用   
                    nextval : 下一个值
-              
-                   注意: currval 需要在调用nextval之后才能使用      
-                        永不回头,往下取数据, 无论发生异常/回滚    
+              								
+           4. 注意:  
+                   1.永不回头,往下取数据, 无论发生异常/回滚。
+                   2.在PLSQL中只能通过 select s.nextval into xx from dual; 获取或赋值。
+                   
                         
             7.1 创建一个 1,3,5,7,9......30 的序列:
                     create sequence seq_test1
@@ -1025,22 +1061,24 @@ package p1_oracle安装;
                     drop sequence seq_test1;
                     
     8. 索引index
-            索引:相当于是一本书的目录,能够提高我们的查询效率
-                如果某一列,你经常用来作为查询条件,那么就有必要创建索引,数据量比较大的情况
+           1. 索引:相当于是表的目录,能够提高我们的查询效率
+                1. 如果某一列,你经常用来作为查询条件,那么就有必要创建索引,数据量比较大的情况
 
-            语法: create index 索引的名称 on 表名(列,列);   
+           2. 语法: create index 索引的名称 on 表名(列,列);   
 
-            注意: 主键约束自带主键索引, 唯一约束自带唯一索引
+           3. 注意: 主键约束自带主键索引, 唯一约束自带唯一索引
 
-            索引原理: btree   --balance Tree(平衡二叉树)  --记录对应rowid
-
-                 如果某列作为查询条件的时候,可以提高查询效率,但是修改的时候,会变慢
+           4. 索引原理: btree   --balance Tree(平衡二叉树)  --记录对应rowid
+                1. 如果某列作为查询条件的时候,可以提高查询效率,但是修改的时候,会变慢
+                2. 索引创建好之后,过一段时间,DBA都需要去做重构索引
                  
-                 索引创建好之后,过一段时间,DBA都需要去做重构索引
-                 
-            SQL调优:
-                 1.查看执行计划,选中查询语句、按F5
-                 2.分析里面的cost 和 影响行数, 想办法降低 
+           5. SQL调优:
+                1. 调优原则：
+                	1.查看执行计划：	(PL/SQL中按F5)
+                		Cost：CPU调用次数		Cardinality:影响行数
+               		2.分析里面的 Cost 和 影响行数, 想办法降低 
+               		
+               	2. 方案：创建索引
                  
                 8.1 五百万数据测试
                 
@@ -1088,16 +1126,17 @@ package p1_oracle安装;
     1.PLSQL编程 
             1.PLSQL: procedure Language 过程语言 Oracle对SQL的一个扩展
                    
-                   让我们能够像在java中一样写 if else else if 条件, 还可以编写循环逻辑 for while
+                   1.让我们能够像在java中一样写 if else else if 条件, 还可以编写循环逻辑 for while
+                   2.PLSQL中可以直接执行 update/insert/delete 语句，
+                   3.不能直接 select语句显示查询结果(会报错)，需通过 select查询出结果后 into赋值。
              
             2.语法:  
                             declare                                     --声明变量
-                                变量名 变量类型;
-                                变量名 变量类型 := 初始值;    
+                                age number := &aaa;      			--&用来定义临时变量，每当&aaa出现，都会要求您为它提供一个值  
                                 vsal emp.sal%type;                      --引用型的变量  
                                 vrow emp%rowtype;                       --记录型变量          
                             begin                                       --业务逻辑
-                                dbms_output.put_line(变量)              --相当于java中 syso 
+                                dbms_output.put_line(变量);             --相当于java中 syso 
                                 select sal into 变量 from.. where..;    --查询结果赋值给变量
                                 (commit;)   (当代码中出现DML语句后，需要使用commit提交数据)
                             end;
@@ -1127,7 +1166,7 @@ package p1_oracle安装;
                             end;
             ------------------------------------------------------------------
             6.loop循环：    loop
-                                exit when 条件
+                                exit when 条件;
                             end loop;
             
             
@@ -1248,34 +1287,42 @@ package p1_oracle安装;
  /* day4                    游标cursor、异常exception、存储过程procedure、存储函数function
  
     1.游标(光标)
-	        游标: 是用来操作查询结果集,相当于是JDBC中ResultSet
+	        游标: 是用来操作查询结果集，可带参、也可不带参，相当于是JDBC中ResultSet
 	       
-	        语法: cursor 游标名[(参数名 参数类型)] is 查询结果集;    (括号中参数为传入参数，需要在open游标时传入)
+	       
+	        声明游标: cursor 游标名[(参数名 参数类型)] is 查询结果集;    (括号中参数为传入参数，需要在open游标时传入)
                     例：cursor youbiao(dno number) is select * from emp where deptno = dno;
 	
-	        开发步骤:
+	        调用游标-传统:		--繁琐，不推荐
                 declare
-                   1. 声明游标
+                   cursor c1 is select * from emp;	--0. 声明游标
                 begin
-                   2. 打开游标             		open 游标名
-                   3. 从游标中取一行数据    fetch 游标名 into 变量
-                                 游标名%found :找到数据
-                                 游标名%notfound : 没有找到数据 
-                   4. 关闭游标       close 游标名
+                   open 游标名						--1. 打开游标             		
+                   	fetch 游标名 into 变量			--2. 从游标获取一行数据    
+                   	c1%found 						--3. 找到数据
+                   	c1%notfound						-- . 没有找到数据 
+                   close 游标名						--4. 关闭游标     
 	            end;
-                
+                  
+	        调用游标-for循环:		--简单，推荐
+	           0.不需要声明额外变量、打开游标、关闭游标。
+				declare
+                  cursor vrows is select * from emp;	--声明一个游标
+                begin
+                  for vrow in vrows loop
+                     dbms_output.put_line('姓名:'||vrow.ename ||' 工资: ' || vrow.sal || '工作:'|| vrow.job);
+                  end loop;
+                end;
+	           
+	            
 	        系统引用游标
 	           1. 声明游标 : 游标名 sys_refcursor
 	           2. 打开游标: open 游标名 for 结果集
 	           3. 从游标中取数据
 	           4. 关闭游标
-	                
-	        for循环遍历游标:
-	           不需要声明额外变量
-	           不需要打开游标
-	           不需要关闭游标      
+	               
            
-            1.1 输出员工表中所有的员工姓名和工资(不带参数游标)  （模板）
+            1.1 输出员工表中所有的员工姓名和工资(不带参数游标)
                     declare
                        cursor vrows is select * from emp;       --声明游标
                        vrow emp%rowtype;                        --声明变量,记录一行数据
@@ -1303,6 +1350,26 @@ package p1_oracle安装;
                       close vrows;
                     end;
                     
+            1.4 for循环-遍历游标(简单方便)  			（模板）
+                  1.不带参数：
+                    declare
+                      cursor vrows is select * from emp;	--声明一个游标
+                    begin
+                      for vrow in vrows loop
+                         dbms_output.put_line('姓名:'||vrow.ename ||' 工资: ' || vrow.sal || '工作:'|| vrow.job);
+                      end loop;
+                    end;
+                   
+                  2.带参数：
+                    declare
+					 cursor c1(eno number) is select * from emp where empno = eno;
+					begin
+					  for r in c1(7369) loop
+					    dbms_output.put_line(r.empno);
+					  end loop;
+					end;
+					select * from emp;         
+                    
             1.3 输出员工表中所有的员工姓名和工资(系统引用游标)
                     declare
                       --声明系统引用游标
@@ -1321,15 +1388,7 @@ package p1_oracle安装;
                       close vrows;
                     end;
                     
-            1.4 使用for循环遍历游标
-                    declare
-                      --声明一个游标
-                      cursor vrows is select * from emp;
-                    begin
-                      for vrow in vrows loop
-                         dbms_output.put_line('姓名:'||vrow.ename ||' 工资: ' || vrow.sal || '工作:'|| vrow.job);
-                      end loop;
-                    end;
+           
                     
             1.5 按照员工工作给所有员工涨工资,总裁涨1000,经理涨800,其他人涨400
 
@@ -1365,15 +1424,14 @@ package p1_oracle安装;
                       commit;
                     end;
                     
-    2. 例外:(意外)程序运行的过程发生异常,相当于是JAVA中的异常
+    2. 例外:(意外)程序运行的过程发生异常,相当于是JAVA中的异常，定义在 begin 	end; 中。
    
 	        语法：
 	            declare
 	               --声明变量
 	            begin
-	               --业务逻辑
-	            exception
-	               --处理异常
+	               	--业务逻辑
+	            exception		--处理异常
 	               when 异常1 then
 	                 ...
 	               when 异常2 then
@@ -1391,7 +1449,7 @@ package p1_oracle安装;
 	
 	        自定义异常:
                         declare
-                            异常名  exception;  --自定义异常
+                            x异常名  exception;  --自定义异常
                         begin
                 
                         raise 异常名;           --抛出异常
@@ -1444,27 +1502,32 @@ package p1_oracle安装;
     
     3. 存储过程procedure
         
-	        存储过程: 1.实际上是封装在服务器上一段PLSQL代码片断,已经编译好了的代码
+	        存储过程: 1.实际上是封装在数据库中的一段,已经编译好了的 PLSQL代码，调用即可执行
 	                  2.客户端取调用存储过程,执行效率就会非常高效
+	                  3.一般不在存储过程/函数中 commit 和 rollback
 	       
-	        语法:(执行一次)
-	                create [or replace] procedure 存储过程的名称(参数名 in|out 参数类型,参数名 in|out 参数类型)
-	                is | as
-	                --声明变量部分
-	                begin
-	                --业务逻辑 
+	        创建存储过程：
+	                create [or replace] procedure 过程名(参数列表)	
+	                is | as									--声明变量部分	is/as在存储过程中没有区别
+	                
+	                begin									--业务逻辑 
+	                
 	                end;  
 	                
-	    Oracle中调用：(调用可多次)
+	               	--参数列表为：	参数名 in|out 参数类型,参数名 in|out 参数类型
+	               					in是传入参数，out是输出参数
+	                
+	                
+	    Oracle中调用：
 	                方式1：
-                    call proc_updatesal(7788,10);
+                    call p1(7788,10);
 	
     
 	                方式2： 用的最多的方式
                     declare
 
                     begin
-                      proc_updatesal(7788,-100);    --储存过程名(参数1，参数2)
+                      proc_1(7788,-100);    --储存过程名(参数1，参数2)
                     end;
                 
             3.1 给指定员工vempno 涨薪vnum,并打印涨薪前和涨薪后的工资
@@ -1503,23 +1566,23 @@ package p1_oracle安装;
 
     4. 存储函数function
         
-	        存储函数: 实际上是一段封装在Oracle服务器中的一段PLSQL代码片断,它是已经编译好了的代码片段
+	        存储函数: 实际上是一段封装在数据库中的一段，已经编译好的 PLSQL代码片断，函数不可直接调用。
 	        
-	        语法: (执行一次)
-	             create [or replace] function 存储函数的名称(参数名 in|out 参数类型,参数名 in|out 参数类型) return 参数类型
-	             is | as
+	        创建函数: (编译)
+	             create [or replace] function 函数名(参数列表) 	--参数列表为：参数名 in 参数类型
+	             return 参数类型								
+	             is | as			--定义变量
 	             
 	             begin
-	               
+	             
+	               return xx;		--函数必须有return
 	             end;
+	       
 	             
 	        存储过程和函数的区别:
-	             1.它们本质上没有区别
-	             2.函数存在的意义是给过程调用   存储过程里面调用存储函数
-	             3.函数可以在sql语句里面直接调用
-	             4.存储过程能实现的,存储函数也能实现,存储函数能实现的,过程也能实现
-	             
-	        默认是 in 
+	             1.过程可以无返回值，也可以多个返回值；函数必须有返回值，且只能返回一个,
+	             2.过程参数列表有 in,out,inout, 函数只有 in,
+	             3.过程可返回 记录集、值；函数只能返回 表对象、值。
             
             4.1 查询指定员工的年薪
                     create or replace function func_getsal(vempno in number) return number
@@ -1528,8 +1591,9 @@ package p1_oracle安装;
 					   vsal number;
 					begin
 					  select sal*12+nvl(comm,0) into vsal from temp where empno = vempno;
-					  return vsal;
+					  return vsal;	--返回年薪
 					end;
+
 
                     --调用存储函数
                     declare
@@ -1552,6 +1616,7 @@ package p1_oracle安装;
 				String user = "wxt";
 				String password = "wxt";
 				Connection con = DriverManager.getConnection(url, user, password);
+				
 				
 					----------JDBC执行Oracle中存储过程-----------
 	0.JDBC执行Oracle中存储过程:
@@ -1579,6 +1644,7 @@ package p1_oracle安装;
 			
 			int i = cstate.getInt(2);	//6. 
 			
+			
 					----------JDBC执行Oracle中存储函数-----------
 	0.JDBC执行Oracle中存储函数:
 	
@@ -1591,10 +1657,12 @@ package p1_oracle安装;
 						
  */
  
+
 /*  day4					触发器trigger、模拟ID自增长
  
  	1. 触发器
-	 		触发器: 当用户执行了 insert | update | delete 这些操作之后, 可以触发一系列其它的动作/业务逻辑
+	 		触发器: 对某张表 执行了 insert | update | delete 这些操作前/后, 可以触发一系列其它的动作/业务逻辑
+	 				(触发器中不能 commit;	rollback;)
 	 		
 			作用 : 
 				     在动作执行之前或者之后,触发业务处理逻辑
@@ -1605,7 +1673,7 @@ package p1_oracle安装;
 			       before | after
 			       insert | update | delete 
 			       on 表名
-			       [for each row]		//加入此行即为行级触发器  不加则为语句级触发器
+			       [for each row]		//加入此行为 行级触发器  不加为 语句级触发器
 			       declare
 				       
 			       begin
@@ -1617,7 +1685,15 @@ package p1_oracle安装;
 				
 				行级触发器:     影响多少行,就触发多少次
 		                :old  代表旧的记录, 更新前的记录
-		                :new  代表的是新的记录
+		                :new  代表的是新的记录         
+		                
+		                
+            (new old 关键字)
+                new 指的是新记录的指针
+                old 指的是旧记录指针
+                这两个变量只有在使用了关键字 "FOR EACH ROW"时才存在.且update语句两个都有,而insert只有:new ,delect 只有:old;
+		              
+		              
 		              
 				1.1 新员工入职之后,输出一句话: 欢迎加入黑马程序员
 						create or replace trigger tri_test1
@@ -1717,13 +1793,10 @@ package p1_oracle安装;
 					insert into person values(null,'张三'); 		--执行多次，触发器自动增加pid
 					
 					select * from person;
-                    
-            (new old 关键字)
-                new 指的是新记录的指针
-                old 指的是旧记录指针
-                这两个变量只有在使用了关键字 "FOR EACH ROW"时才存在.且update语句两个都有,而insert只有:new ,delect 只有:old;
+           
 
  */
+
 public class Oracle详解 {
 
 }

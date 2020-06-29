@@ -39,7 +39,7 @@ package MySQL数据库;
 				1.MSI安装(Windows Installer)(--见B站收藏夹)
 				2.ZIP安装	--初学者较难掌握
 
-			3.安装后--配置环境变量
+			3.配置环境变量
 				将MySQL\bin的目录添加到环境变量path中，即可在命令行中任意目录下运行MySQL\bin下的指令
 			
 			4.确认安装成功
@@ -166,7 +166,9 @@ package MySQL数据库;
  				--------列的约束--------	
  				1.主键约束：primary key									--不允许为空，不允许重复
  					1.1.删除主键：alter table 表1 drop primary key;
- 					1.2.定义主键自动增长：auto_increment
+ 					1.2.定义主键自动增长：auto_increment					--定义auto_increment后，
+																			主键可以插入null值
+																			如：insert into test0 values(null,'a');
  					
  				2.唯一约束：unique 										--该属性唯一，可以为空
  				3.非空约束：not null										--该属性不可为空
@@ -184,11 +186,11 @@ package MySQL数据库;
  					
  				--------数据类型-------
  				Java中			MySQL中
- 				int				int
  				char/String		char()		char(3):	 '一  '	'一空格空格'		--固定长度
  								varchar()	varchar(3):  '一  '	'一'				--可变长度			
 			 								长度代表的是字符的个数		
-			 								 									 								
+			 								 					
+ 				int				int				 								
  				double			double(总长度,小数点后长度)：		double(10,2)
  				float			float(总长度,小数点后长度)：		float(10,2)
  				BigDecimal		decimal(总长度,小数点后长度)：		decimal(10,2)	--默认是整数

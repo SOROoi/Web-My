@@ -111,6 +111,14 @@ public class UserService implements IUserService {
 			dao.addRoleToUser(userId, id);		//遍历roleId 数组，将每一个roleId，与userId 一起插入数据库中
 		}
 	}
+
+	//通过username查找用户id
+	@Override
+	public String findId(String username) throws Exception {
+		// TODO Auto-generated method stub
+		UserInfo user = dao.findByName(username);
+		return user.getId();
+	}
 		
 
 
