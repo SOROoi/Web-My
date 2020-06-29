@@ -49,8 +49,8 @@ package git的使用;
 	 .查看远程库详情：
 	 	git remote -v
 		
-	4.同步到 GitHub 仓库，把当前分支master同步到远程仓库。第一次同步执行此命令。
-		git push -u origin master
+	4.同步到 GitHub 仓库，把本地分支master同步到 远程分支。第一次同步执行此命令。
+		git push -u origin master       --git push <远程主机名> <本地分支名>  <远程分支名>
 	   
 	        后续同步：
 	    git push origin master
@@ -60,18 +60,21 @@ package git的使用;
         
         
         
-    5.将远程主机origin的master分支与本地的master分支合并(开发项目时)
-        git pull origin master
+    5.拉取远程分支的内容：   (pull之前应commit)
+        git pull <远程主机名> <远程分支名>:<本地分支名>     --将远程主机A的 远程分支B，拉取到本地分支C
+        
+        git pull origin master      --将远程master分支，拉取到本地master分支
 		
-     .若无冲突:
-        1.拉取远程分支的内容：
+        
+     .若无冲突:     (远程文件或本地文件，只要其中一方未修改)       --若其中一方有修改，pull后内容为 修改后的内容   
+        1.拉取远程分支的内容：    
             git pull origin master
             
-        2.发布到远程分支
+        2.发布到远程分支：
             git push origin master
         
         
-     .若有冲突，解决冲突：(远程文件与本地内容不同时)  
+     .若有冲突，解决冲突：(远程文件修改,本地文件修改，内容不同时)  
         1.拉取远程分支的内容：
             git pull origin master
             
