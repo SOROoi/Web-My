@@ -1,4 +1,4 @@
-Oracle
+﻿Oracle
 账号:545772909@qq.com
 密码：wxt3601WXT
 
@@ -17,7 +17,9 @@ linux账户密码（CentOS版）
 使用 Filezilla 远程连接linux，远程传输文件。
 文件位置：G:\JAVA相关软件\FileZilla-3.7.3远程传输工具
 连接需要：远程设备IP。用户名，密码，端口号22。    --需要linux开启 22端口，即SSH协议。
+若连接失败，协议使用SFTP。
 使用：左侧为本地目录，右侧为远程目录。将左侧文件拖拽到右侧，即进行传输。
+
 SSH协议：
 Secure Shell（安全外壳协议）
 SSH协议用来远程传输，可以对数据加密。
@@ -43,3 +45,5 @@ linux命令：
 5.默认用户目录：	cd
 6.创建文件夹：	mkdir a		mkdir  /root/b
 7.创建多级文件夹：	mkdir  -pv  /root/c/e/d
+8.删除文件夹:	rm -rf /user/xx
+9.查看本地进程(redis)：	ps -ef | grep -i redis
