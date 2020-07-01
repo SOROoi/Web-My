@@ -17,11 +17,13 @@ import net.sf.json.JSONObject;
 					
 				},"json" );
 					
+					
 				$.get(url, [data], [callback], [type])
 					url：待载入页面的URL地址.
  					data：待发送 Key/value 参数。
  					callback：载入成功时回调函数。
  					type：返回内容的格式，xml, html, script, json, text, _default。
+ 
  
  	服务器端
  		1.json数据格式：[
@@ -37,53 +39,52 @@ import net.sf.json.JSONObject;
 					    }
 					   ]
 			
-		2.Java代码中，将 Bean 转为 json格式数据：
-					0.导入json的依赖包
-						json-lib-2.4-jdk15.jar
-						
-					1.前提：
-						必须为JavaBean才可以被转为json数据，即含有成员变量，get方法,set方法
-					
-					2.若为单个bean：		JSONObject.fromObject(Object o) ---> 一个json数据	{ name : zhangsan , age:18}
-										
-						例：	JSONObject jsonObject = JSONObject.fromObject(new Bean());
-							String json = jsonObject.toString();
-					
-					
-					3.若为多个bean：		JSONArray.fromObject(List l) 	---> 一组json数据	[{ a:b , c:d } , {} , {} ]							
-						
-						例：	ArrayList<Object> list = new ArrayList<Object>();
-							list.add(new Bean());
-							list.add(new Bean());
-							JSONArray jsonArray = JSONArray.fromObject(list);
-							String json = jsonArray.toString();
+			
+		2.将 Bean 转为 json数据：
+			0.导入json的依赖包
+				json-lib-2.4-jdk15.jar
+				
+			1.前提：
+				必须为JavaBean才可以被转为json数据，即含有成员变量，get方法,set方法
+			
+			2.先转为JSONObject/JSONArray对象，再调用toString()方法。
+								
+				例：	JSONObject jsonObject = JSONObject.fromObject(new Bean());
+					String json = jsonObject.toString();			
+				
+				例：	ArrayList<Object> list = new ArrayList<Object>();
+					list.add(new Bean());
+					list.add(new Bean());
+					JSONArray jsonArray = JSONArray.fromObject(list);
+					String json = jsonArray.toString();
 												
-		3.将 json数据 转为 bean:
-					1.springmvc框架提供，需满足：	1. 导入jackson的jar包。
-																	jackson-databind
-																	jackson-core
-																	jackson-annotations
-												2. json数据key名 与 bean中属性名 相同。
 												
-					2.先转为 JSONObject对象，再调用 toBean(JSONObject o,Class c)方法转为 Bean：
+		3.将 json数据 转为 Bean:
+			1.springmvc框架提供，需满足：	1. 导入jackson的jar包。
+															jackson-databind
+															jackson-core
+															jackson-annotations
+										2. json数据key名 与 bean中属性名 相同。
+												
+			2.先转为 JSONObject对象，再调用 toBean(JSONObject o,Class c)方法转为 Bean：
 					
-						例:	String str = "{'name':'张三','age':'15'}";
-							JSONObject jObj = JSONObject.fromObject(str);
-							Bean b = (Bean) JSONObject.toBean(jObj, Bean.class);	//指定转换的Class对象,并强转
+				例:	String str = "{'name':'张三','age':'15'}";
+					JSONObject jObj = JSONObject.fromObject(str);
+					Bean b = (Bean) JSONObject.toBean(jObj, Bean.class);	//指定转换的Class对象,并强转
  
- 						例：	String str = "[{'name':'李四','age':'16'},{'name':'王五','age':'17'}]";
-							JSONArray jArray = JSONArray.fromObject(str); 	//将json 字符串转为 JSONArray对象
-							System.out.println(jArray);
-							Object[] oArray = jArray.toArray(); 	//JSONArray 对象转为 Object数组
-							for (Object o : oArray) {
-								JSONObject jObj = JSONObject.fromObject(o); 	//将每个Object 转为 JSONObject对象
-								Bean b = (Bean) JSONObject.toBean(jObj, Bean.class); //将每个JSONObject 对象转为 Bean对象
-								System.out.println(b.getName() + "=" + b.getAge());
-							}
+ 				例：	String str = "[{'name':'李四','age':'16'},{'name':'王五','age':'17'}]";
+					JSONArray jArray = JSONArray.fromObject(str); 	//将json 字符串转为 JSONArray对象
+					System.out.println(jArray);
+					Object[] oArray = jArray.toArray(); 	//JSONArray 对象转为 Object数组
+					for (Object o : oArray) {
+						JSONObject jObj = JSONObject.fromObject(o); 	//将每个Object 转为 JSONObject对象
+						Bean b = (Bean) JSONObject.toBean(jObj, Bean.class); //将每个JSONObject 对象转为 Bean对象
+						System.out.println(b.getName() + "=" + b.getAge());
+					}
  
  */
 
-/*							AJAX	JS代码		
+/*							AJAX	JS写法	
  * 	
 	 1.发送 get请求，并发送数据、获取数据：
 			

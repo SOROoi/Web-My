@@ -24,6 +24,7 @@ import java.sql.Statement;
  					
  		3.不同数据库软件有不同的驱动,SUN公司为了简化、统一对数据库的操作，定义了一套Java操作数据库的规范，称之为JDBC。
  		
+ 		
  	2.JDBC包中DriverManager类(驱动管理器)
  	
  		1.用于加载驱动、创建与数据库的链接，这个API的常用方法：

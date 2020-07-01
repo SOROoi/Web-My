@@ -1173,8 +1173,8 @@ package spring;
 	1.JdbcTemplate 概述
 		它是 spring 框架中提供的一个对象，是对原始 Jdbc API 对象的简单封装。
 		
-		JdbcTemplate 在 spring-jdbc-5.0.2.RELEASE.jar 中，
-		在导包时，还需要导入一个 spring-tx-5.0.2.RELEASE.jar（它是和事务相关的）。
+		导包：	spring-jdbc-5.0.2.RELEASE.jar	(JdbcTemplate)
+		 		spring-tx-5.0.2.RELEASE.jar	（DriverManagerDataSource连接池）
 		
 	2.spring 框架的其他操作模板类：
 		操作关系型数据的：	JdbcTemplate
@@ -1182,100 +1182,60 @@ package spring;
 		操作 nosql 数据库的：RedisTemplate
 		操作消息队列的：	JmsTemplate
 
-	2.5.JdbcTemplate 原始用法
-		例:	//准备数据源：spring的内置数据源
-	        DriverManagerDataSource ds = new DriverManagerDataSource();
-	        ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
-	        ds.setUrl("jdbc:mysql://localhost:3306/19spring?serverTimezone=UTC");
-	        ds.setUsername("root");
-	        ds.setPassword("root");
-	
-	        //1.创建JdbcTemplate对象
-	        JdbcTemplate jt = new JdbcTemplate();
-	        //给jt设置数据源
-	        jt.setDataSource(ds);
-	        //2.执行操作
-	        jt.execute("insert into account(name,money)values('ccc',1000)");
+
+	2.5.JdbcTemplate 方法
+		1.添加方法：
+			jt.update("insert into account(name,money)values(?,?)","eee",3333f);
+					
+		2.更新方法：
+			jt.update("update account set name=?,money=? where id=?","test",4567,7);
+			
+		3.删除方法：
+			jt.update("delete from account where id=?",8);
+			
+		4.查询：
+			(query(String sql, RowMapper<T> rowMapper, Object... args) --List<T>) jdk1.5后适用
+			(query(String sql, Object[] args, RowMapper<T> rowMapper) --List<T>) 所有版本适用
+			
+			1.使用 RowMapper 的实现类（常用）
+			 String sql = "select * from account where money > ?";
+			 List<Account> accounts = jt.query(sql, new BeanPropertyRowMapper<Account>(Account.class), 1000f);	
+			 
+			 
+			2.自己实现 RowMapper 接口
+			 List<Account> accounts = jt.query(sql,new AccountRowMapper(),1000f);	
+			
+			
+		5.查询返回一行一列（使用聚合函数，但不加group by子句）
+			String sql = "select count(*) from account where money > ?";
+			Long count = jt.queryForObject(sql, Long.class, 1000f);
+	   				
+	   					
 	
 	3.JdbcTemplate 的使用：
 		1.创建工程，添加依赖包：	spring-context(IOC)
 								spring-jdbc-5.0.2.RELEASE.jar(JdbcTemplate)
 								spring-tx-5.0.2.RELEASE.jar(spring事务)
-								
-  		2.创建bean.xml：	<?xml version="1.0" encoding="UTF-8"?>
-						<beans xmlns="http://www.springframework.org/schema/beans" 
-							xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-							xsi:schemaLocation="http://www.springframework.org/schema/beans 
-							http://www.springframework.org/schema/beans/spring-beans.xsd">
-						</beans>
 						
-		3.bean.xml中配置JdbcTemplate：
-						<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-							<property name="dataSource" ref="dataSource"></property>
-						</bean>
+		2.配置JdbcTemplate：
+				<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+					<property name="dataSource" ref="dataSource"></property>
+				</bean>
 						
-		4.bean.xml中配置DataSource：		(spring 内置DriverManagerDataSource)
-						<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-							<property name="driverClassName" value="com.mysql.cj.jdbc.Driver"></property>
-							<property name="url" value="jdbc:mysql://localhost:3306/19spring?serverTimezone=UTC"></property>
-							<property name="username" value="root"></property>
-							<property name="password" value="root"></property>
-						</bean>
-		5.测试：	
-				//1.获取容器
-		        ApplicationContext ac = new ClassPathXmlApplicationContext("bean.xml");
-		        //2.获取对象
-		        JdbcTemplate jt = ac.getBean("jdbcTemplate",JdbcTemplate.class);
-		        //3.执行操作
-		        jt.execute("insert into account(name,money)values('ddd',2222)");
-		        
-		        1.保存方法：
-					jt.update("insert into account(name,money)values(?,?)","eee",3333f);
-				2.更新方法：
-					jt.update("update account set name=?,money=? where id=?","test",4567,7);
-				3.删除方法：
-					jt.update("delete from account where id=?",8);
-				4.查询所有：
-					(query(String sql,RowMapper<T> rowMapper,Object... args) --List<T>) jdk1.5后适用
-					(query(String sql,Object[] args,RowMapper<T> rowMapper) --List<T>) 所有版本适用
-					
-					List<Account> accounts = 	（自己实现 RowMapper 接口）
-					jt.query("select * from account where money > ?",new AccountRowMapper(),1000f);
-					
-					List<Account> accounts = 	（使用spring中 RowMapper 的实现类）（常用）
-					jt.query("select * from account where money > ?",new BeanPropertyRowMapper<Account>(Account.class),1000f);
-					
-				5.查询返回一行一列（使用聚合函数，但不加group by子句）
-       				Long count = 
-       				jt.queryForObject("select count(*) from account where money > ?",Long.class,1000f);	
-					
-		6.dao 实现类中使用：		(自己定义，可以使用xml注入、注解注入)
-				1.定义dao实现类 成员变量为JdbcTemplate,
-				2.再在bean.xml中,dao实现类 注入JdbcTemplate。	
-				3.使用jdbcTemplate 得到JdbcTemplate 对象。	
-					
-				例-dao实现类：	public class DaoImplement implements Dao{
-									private JdbcTemplate jdbcTemplate;
+		3.配置DataSource：		(spring 内置DriverManagerDataSource)
+				<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+					<property name="driverClassName" value="com.mysql.cj.jdbc.Driver"></property>
+					<property name="url" value="jdbc:mysql://localhost:3306/19spring?serverTimezone=UTC"></property>
+					<property name="username" value="root"></property>
+					<property name="password" value="root"></property>
+				</bean>
 				
-								    public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
-								        this.jdbcTemplate = jdbcTemplate;
-								    }
-								    ...
-								}
+		4.使用：	
+	        	JdbcTemplate jt = new JdbcTemplate(dataSource);		//传入DataSource
+	        	String sql = "select * from user";
+				List<User> list = jt.query(sql, new BeanPropertyRowMapper<User>(User.class));	//执行sql
+
 				
-  		7.spring 中 JdbcDaoSupport 类：	(需继承，可以使用xml注入、无法使用注解注入)
-				1.封装了dao实现类中 需要的： 成员变量JdbcTemplate、setJdbcTemplate()方法、注入DataSource获取JdbcTemplate的方法
-				2.好处：去除掉定义和注入JdbcTemplate的重复代码
-				3.使用：
-						1.dao实现类 继承 JdbcDaoSupport类、实现 dao接口,
-						2.bean.xml中,dao实现类 注入JdbcTemplate 或者 注入DataSource,
-						3.使用super.getTemplate()得到JdbcTemplate 对象。
-						
-				例-dao实现类：	public class AccountDaoImpl extends JdbcDaoSupport implements IAccountDao {
-									...
-								}
-						
-		6.7为使用JdbcTemplate的两种方式
  */
 
 /*								spring中 控制事务(基于XML)			(--见：G:\JD\JavaWeb工程文件\day04_eesy_05tx_xml）

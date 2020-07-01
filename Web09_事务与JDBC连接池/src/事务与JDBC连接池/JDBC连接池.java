@@ -85,7 +85,7 @@ import javax.sql.DataSource;
  			
  				
  	----------------------------------------------------------------------------------------------			
- 	4.DBCP数据源(连接池)
+ 	1.DBCP数据源(连接池)
  		1.简介：
  				DBCP是 Apache组织下的开源连接池实现
  				
@@ -99,7 +99,7 @@ import javax.sql.DataSource;
 				BasicDataSourceFactory factory = new BasicDataSourceFactory();		//创建连接池工厂
 				DataSource pool = factory.createDataSource(Properties prop);		//获得连接池对象
 
-	5.C3P0 数据源(连接池)		(--配置文件c3p0-config.xml	见src/c3p0连接池)
+	2.C3P0 数据源(连接池)		(--配置文件c3p0-config.xml	见src/c3p0连接池)
 		1.简介：
  				C3P0是 Spring内置的连接池
  				
@@ -112,7 +112,8 @@ import javax.sql.DataSource;
 		3.获得C3P0连接池：
 				DataSource pool = new ComboPooledDataSource();
  			
- 	6.Tomcat数据源(连接池)	(--配置文件context.xml	见src/Tomcat连接池)
+ 			
+ 	3.Tomcat 数据源(连接池)	(--配置文件context.xml	见src/Tomcat连接池)
  		1.简介：
  				Tomcat内置了一个连接池
  				
@@ -129,8 +130,24 @@ import javax.sql.DataSource;
 		4.拓展：
 				删除tomcat中的应用资源时，应同时删除tomcat的 conf/Catalina/localhost目录下，应用资源的xml配置文件。否则服务器启动会报错
 
- 	
- 	
+
+ 	4.Druid 连接池(目前最好的连接池)
+ 		1.简介：
+ 				阿里巴巴的连接池
+ 				
+ 		2.依赖：
+ 				druid-1.1.20.jar
+ 				
+ 		3.使用:
+ 				可以直接传入 Properties 对象获得 Druid连接池：
+ 				driverClassName = com.mysql.cj.jdbc.Driver
+				url = jdbc:mysql://localhost:3306/14redis?serverTimezone=UTC
+				username = root
+				password = root
+ 				
+ 				Properties properties = new Properties();
+ 				DataSource dataSource = DruidDataSourceFactory.createDataSource(properties);
+ 		
  */
 
 /*						包装设计模式
