@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@ConfigurationProperties(prefix = "person")		//此注解自动将 yml文件信息 注入字段， 需要提供get/set方法
+@ConfigurationProperties(prefix = "person")		//此注解自动将 yml文件信息 注入类中字段， 需要提供get/set方法
 @RestController
 public class MyController {
 

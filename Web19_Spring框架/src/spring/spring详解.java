@@ -463,7 +463,7 @@ package spring;
 				private String name;
 				
 				
-		4-1. @Value 通过spEL表达式 获得.properties中数据：
+		4-1. @Value 通过spEL表达式 获得.properties中数据：(基于xml)
 			
 			1.需配置：
 				<context:property-placeholder location="classpath:my.properties" file-encoding="UTF-8"/>
@@ -542,7 +542,7 @@ package spring;
 	 	1.创建一个类，作为配置类：它的作用和bean.xml是一样的。(新注解)
 	 		
 	 		配置类只需要满足3个条件中的一个：  1.创建容器时传入：配置类.class
-	 									  2.主配置类扫描了该包、且该类上标 @Configuration
+	 									  2.主配置类扫描了该包、且该类上标 @Configuration (最优解)
 	 									  3.主配置类标注了 @Import(配置类.class)		
 	 	       例:	主配置类
 		 		@Configuration			//1.
@@ -560,30 +560,38 @@ package spring;
 			1.Configuration
 				作用：   指定当前类是一个配置类
 				细节：   当配置类.class作为AnnotationConfigApplicationContext对象的传入参数时，该注解可以不写。
+						
+			2.PropertySource
+				作用：		指定properties文件的位置。配置类注解 可使用spEL表达式获取数据，如：@Value("${jdbc.driver}")
+	 			value 属性：	指定文件的名称和路径。
+							  关键字：classpath，表示类路径下
 				
-			2.ComponentScan
+			3.Value
+				作用：	为基本类型、String类型的字段注入数据。可以配合 @PropertySource 注入properties文件中的数据。
+					
+			4.Bean
+				作用：		把当前方法的返回值作为bean对象存入spring的ioc容器中
+ 				name 属性：   指定bean的id。当不写时，默认值是当前方法的名称
+				细节：		使用注解配置方法时，若方法需传入参数，spring框架会去容器中查找有没有可用的bean对象。
+					     查找的方式和Autowired注解方式是一样的
+				
+			5.ComponentScan
 				作用： 	  该注解指定spring在创建容器时要扫描的包
 	 			value 属性：   它和basePackages的作用是一样的，都是用于指定创建容器时要扫描的包。
 				———— 我们使用此注解就等同于在xml中配置了:
 					<context:component-scan base-package="com.itheima"></context:component-scan>
-					
-			3.Bean
-				作用： 	  把当前方法的返回值作为bean对象存入spring的ioc容器中
- 				name 属性：   指定bean的id。当不写时，默认值是当前方法的名称
-				细节：    	使用注解配置方法时，若方法需传入参数，spring框架会去容器中查找有没有可用的bean对象。
-					     查找的方式和Autowired注解方式是一样的
-					     
-			4.Import
+			
+			6.Import
 				作用： 	  导入其他配置类.class
 				value 属性：   用于指定其他配置类的字节码。
 						当我们使用Import的注解之后，有Import注解的类就父配置类，而导入的都是子配置类
-						
-			5.PropertySource
-				作用： 	  指定properties文件的位置。配置类注解 可使用spEL表达式获取数据，如：@Value("${jdbc.driver}")
-	 			value 属性：   指定文件的名称和路径。
-							  关键字：classpath，表示类路径下
+				
 							  
-			例：副配置类
+							  
+			例：配置类(以下四个注解 代替了 注入外部Bean的XML配置：@Configuration @PropertySource @Value @Bean)
+			
+				@Configuration
+				@PropertySource(classpath="jdbc.properties")	//结合@Value 注入properties 文件数据
 				public class JdbcConfig {
 
 				    @Value("${jdbc.driver}")

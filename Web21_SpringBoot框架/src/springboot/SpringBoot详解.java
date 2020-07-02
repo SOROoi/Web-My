@@ -70,7 +70,8 @@ package springboot;
 			1.依赖文件，整合了需要的jar包	
 			2.<parent>中就是 SpringBoot 的依赖，对依赖进行了版本控制。
 			
-		3.application.properties / application.yml
+		3.application.properties :只能配置基本类型、String
+		/ application.yml :可以配置对象、集合
 			1.配置文件.
 			2.功能：	
 				server.port=8091	--服务器端口
@@ -126,7 +127,7 @@ package springboot;
  */
 
 
-/*								 热部署、常用注解
+/*								 热部署、常用注解、springboot中注入外部Bean(spring纯注解)/注入属性
  * 
 	1.热部署
 		1.修改代码后不重启就能生效，称之为热部署。
@@ -145,7 +146,7 @@ package springboot;
 						    <optional>true</optional>
 						</dependency>
 
-	2.常用注解
+	2. SpringBoot 常用注解
 	
 		1. @SpringBootApplication
 		
@@ -176,14 +177,72 @@ package springboot;
 					public void setName(String name) {
 						this.name = name;
 					}
+			
+		4. @EnableConfigurationProperties(JdbcProperties.class)
+			0.标注于配置类上，可以将带有 @ConfigurationProperties 的类 注入IOC容器
+				
 					
-		4. @@RestController
+		5. @@RestController
 			1.等同于 @Controller + @ResponseBody
 			2.相当于 Controller中所有的方法都添加了 @ResponseBody注解，将方法的返回值以 JSON 或 String 发回客户端。
 
 
-		5. @Mapper
+		6. @Mapper
 			1.Dao接口的注解，将Dao注入到IOC容器中
+			
+			
+			
+	3.SpringBoot中注入外部Bean、属性：
+		1.原理：	SpringBoot 完全摒弃了XML注解，实际上是使用spring 的纯注解来注入外部Bean。
+				并且SpringBoot 还添加了一些注解，对注入Bean和属性做了优化。
+				
+		2.注入外部Bean:
+				@Configuration
+				//将带有@ConfigurationProperties注解的类 注入IOC容器 (SpringBoot)
+				@EnableConfigurationProperties(JdbcProperties.class)	
+				public class JdbcConfig{
+					
+					@Bean
+					public DataSource createDataSource(JdbcProperties prop){
+						DruidDataSource dataSource = new DruidDataSource();
+						dataSource.setDriverClassName(prop.getDriverClassName());
+						dataSource.setUrl(prop.getUrl());
+						dataSource.setUsername(prop.getUsername());
+						dataSource.setPassword(prop.getPassword());
+						return dataSource;
+					}
+				}
+				
+				//将application.properties中数据注入字段，需字段提供get/set方法   (SpringBoot)
+				@ConfigurationProperties(prefix="jdbc")	
+				@Data									//该注解会在class文件中生成get/set方法。需要导入lombok.jar (lombok)
+				public class JdbcProperties{
+					private String driverClassName;
+					private String url;
+					private String username;
+					private String password;
+				}
+		
+		
+	3.2 SpringBoot中注入外部Bean、属性：(最简洁)
+		0.方法上添加 	@Bean
+					@ConfigurationProperties(prefix="a") 即可。
+					
+		1.原理：	spring 自动将 application.properties中 配置属性,      
+				与     
+				new DruidDataSource()中 同名set方法匹配，注入到 DruidDataSource对象中。
+				
+		2.使用：
+				@Configuration
+				public class JdbcConfig{
+				
+					@Bean
+					@ConfigurationProperties(prefix="jdbc")
+					public DataSource createDruid(){
+						return new DruidDataSource();
+					}
+				
+				}
  */
 
 
