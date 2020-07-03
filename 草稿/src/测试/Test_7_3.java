@@ -1,6 +1,8 @@
+package 测试;
+
 import java.util.Arrays;
 
-public class Test_7_2 {
+public class Test_7_3 {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -9,7 +11,7 @@ public class Test_7_2 {
 //		select(arr);
 		quick(arr, 0, arr.length - 1);
 		System.out.println(Arrays.toString(arr));
-		System.out.println(binary(arr, 254));
+		System.out.println(binary(arr, 0));
 	}
 
 	private static int binary(int[] arr, int i) {
@@ -36,6 +38,7 @@ public class Test_7_2 {
 		if (left >= right) {
 			return;
 		}
+
 		int i, j, index;
 		index = arr[left];
 		i = left;
@@ -56,8 +59,8 @@ public class Test_7_2 {
 			arr[i] = arr[j];
 			arr[j] = tem;
 		}
-		quick(arr, left, i - 1);
 		quick(arr, i + 1, right);
+		quick(arr, left, i - 1);
 	}
 
 	private static void select(int[] arr) {

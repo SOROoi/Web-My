@@ -557,7 +557,14 @@ package springMVC;
 					}
 
 	3. @PathVariable
-		1. 作用：绑定url中 占位符中数据。例如：url为	/delete/{id}，{id}就是占位符
+		1. 作用：绑定url中 占位符中数据。
+		
+				例如：	@RequestMapping(path="/hello/{id}/{name}")
+						public void method(@PathVariable("id")Long id, @PathVariable("name")String name){
+						}
+						
+				则：		url传入时：	/hello/1/mike		  
+				
 		2. 属性：
 			1. value：指定url中的占位符名称
 		3. Restful风格的URL：

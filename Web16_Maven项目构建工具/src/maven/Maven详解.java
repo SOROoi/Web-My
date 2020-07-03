@@ -365,7 +365,16 @@ package maven;
 											  </activeProfiles>
 		6.项目修改后上传私服
 			1.项目修改后需要修改版本号，再上传到私服，否则无法拿到该版本jar包
+			
+
+	3. Maven 项目中 <dependencyManagement>:
+		1.用于pom.xml中，
+		2.父工程 用此标签--声明依赖的版本号，所有子项目引入该依赖时，无需显式地列出版本号。
+		3.子项目需要引入依赖。
+		
  */
+
+
 public class Maven详解 {
 
 }

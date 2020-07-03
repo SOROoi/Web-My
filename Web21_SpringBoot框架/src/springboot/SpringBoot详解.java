@@ -36,7 +36,7 @@ package springboot;
  */
 
 
-/*								(eclipse) 创建项目、核心文件、yml写法
+/*								(eclipse) 创建项目、核心文件、配置文件、yml写法
  
 	1.安装Spring boot 插件 Spring Tool Suite
 	
@@ -71,11 +71,14 @@ package springboot;
 			2.<parent>中就是 SpringBoot 的依赖，对依赖进行了版本控制。
 			
 		3.application.properties :只能配置基本类型、String
-		/ application.yml :可以配置对象、集合
+		  application.yml :可以配置对象、集合
 			1.配置文件.
 			2.功能：	
 				server.port=8091	--服务器端口
 				server.servlet.context-path=/demo	#当前web项目名称
+				
+		properties配置信息见：（87.4后）
+			https://docs.spring.io/spring-boot/docs/2.0.1.RELEASE/reference/htmlsingle/#common-application-properties
 
 
 
@@ -187,9 +190,20 @@ package springboot;
 			2.相当于 Controller中所有的方法都添加了 @ResponseBody注解，将方法的返回值以 JSON 或 String 发回客户端。
 
 
-		6. @Mapper
+		6. @Mapper	(Mybatis注解)
 			1.Dao接口的注解，将Dao注入到IOC容器中
 			
+		 . @MapperScan("wxt.mapper")
+			1.配置类 的注解，标注后 mapper包下dao可省略 @Mapper注解。
+			
+		
+		7. @GetMapping		(springMVC注解)
+			0.标注于方法，用于处理 GET请求的映射。
+			1.是 @RequestMapping(method = RequestMethod.GET)的缩写。
+			
+		 . @PostMapping
+			0.标注于方法，用于处理 POST请求的映射。
+			1.是 @RequestMapping(method = RequestMethod.POST)的缩写。
 			
 			
 	3.SpringBoot中注入外部Bean、属性：
@@ -274,6 +288,61 @@ package springboot;
 	5.创建实体类 UserInfo
 	6.编写Dao接口，并添加 @Mapper注解，即可注解编写sql.
 	
+ */
+
+
+/*								整合 spring事务和 JDBC连接池
+	1.导入启动器依赖：
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-jdbc</artifactId>
+			</dependency>
+			
+	2.依赖包介绍：
+		该起步依赖包含了 spring-jdbc.jar  spring-tx.jar，导入即可使用 spring的事务。
+		此外还包含了 HikariCP.jar，HikariCP 连接池(目前最快的连接池)。
+		
+	3.我们只需要配置：
+		# 连接四大参数
+		spring.datasource.url=jdbc:mysql://localhost:3306/heima
+		spring.datasource.username=root
+		spring.datasource.password=123
+		
+		# 可省略，SpringBoot自动推断
+		spring.datasource.driverClassName=com.mysql.jdbc.Driver
+		
+		spring.datasource.hikari.idle-timeout=60000
+		spring.datasource.hikari.maximum-pool-size=30
+		spring.datasource.hikari.minimum-idle=10
+ */
+
+
+/*								通用 Mapper
+			
+	1.介绍：
+		1.使用通用Mapper，自动生成 单表操作的通用方法，无需再自己定义。
+		2.底层使用了 Mybatis启动器、jdbc启动器。
+		    无需配置 Mybatis驼峰，只需配置 Mybatis别名包(如果使用)。
+		3.通用 Mapper github网站：https://github.com/abel533/Mapper
+
+	2.通用Mapper
+		通用Mapper的作者也为自己的插件编写了启动器，我们直接引入即可：
+			dependency>
+				<groupId>tk.mybatis</groupId>
+				<artifactId>mapper-spring-boot-starter</artifactId>
+				<version>2.0.2</version>
+			</dependency>
+			
+	3.通用Mapper使用：
+		1.Dao 继承 Mapper<T> 接口.				
+		
+		2.Dao 标注 @Mapper 注入IOC.						--(Mybatis注解)
+		
+		3.Bean 标注 @Table(name="user_tab") 关联表名.		--(通用Mapper 注解)
+		
+		4.Bean字段 	标注 @Id 关联主键.
+					标注 @KeySql(useGeneratedKeys = true) 表示自增.	--(通用Mapper 注解)
+					标注 @Transient 不会匹配数据库字段.
  */
 
 
