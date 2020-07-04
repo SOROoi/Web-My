@@ -1,0 +1,13 @@
+
+server:
+  port: 10000
+  
+spring:
+  application:
+    name: customer	#显示在Eureka中的服务名
+    
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:8888/eureka
+    

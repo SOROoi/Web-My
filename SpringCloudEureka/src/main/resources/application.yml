@@ -1,0 +1,14 @@
+server:
+  port: 8888
+  
+spring:
+  application:
+    name: EurekaDemo	#应用名，会在eureka中显示
+    
+eureka:
+  client:
+    fetch-registry: true			#是否拉取其他服务信息，默认true
+    register-with-eureka: true		#是否注册自己的信息到 eureka服务器，默认true
+    service-url:                    # EurekaServer的地址，现在是自己的地址，如果是集群，需要加上其它Server的地址。
+      defaultZone: http://127.0.0.1:${server.port}/eureka
+      
