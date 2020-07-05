@@ -150,7 +150,7 @@ package 微服务;
 				      
 				---------------调用者-------------
 				      
-			4.调用者--通过服务名 获得IP/port--远程调用服务：
+			4.远程调用类--通过服务名 获得IP/port--远程调用服务：
 			
 				1.启动类中 注入 RestTemplate对象：
 					@Bean
@@ -200,7 +200,7 @@ package 微服务;
 						return new RestTemplate();
 					}
 			
-			3.调用类中：
+			3.远程调用类中：
 					@Autowired
 	    			private RestTemplate restTemplate;				// 远程调用
 	    			
@@ -212,9 +212,102 @@ package 微服务;
 						User user = restTemplate.getForObject(baseUrl , User.class);
 						return user;
 					}
+					
+			4.修改负载均衡算法：(可选配置，默认轮询)
+					1.application.yml中添加：	
+					user-service:
+						ribbon:
+							NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
 		
+		
+	------------------------------------------------ 组件三 ------------------------------------------------------------------
+	
+	3.Hystix 熔断器
+		1.Hystix是Netflix开源的一个延迟和容错库。
+			应对服务间调用延迟、调用失败阻塞 而引起服务器资源耗尽的 雪崩、阻塞等问题，提供了解决方案。	
+		
+		2.解决方案：
+			1.线程隔离(默认实现)：为每个 依赖服务(一个服务有多个依赖服务)，分配一个小的线程池。调用请求通过线程池中空闲线程访问 依赖服务。
+			2.线程降级(手动添加)：依赖服务调用超时(失败)、或线程池满时，不会阻塞--直接返回一个执行结果。
+			3.线程熔断(默认实现)：熔断机制，不判断超时时长，直接降级。
 			
- */
+		3.好处：
+			1.访问线程池，用户的请求失败，不会导致阻塞而引起雪崩，(线程隔离)
+			2.调用失败 直接返回执行结果。(线程降级、熔断)
+			
+			
+		4.Hystix 的使用：
+			---------------调用者---------------
+			1.引入依赖：(先添加 SpringCloud 版本管理)	
+					<dependency>
+					    <groupId>org.springframework.cloud</groupId>
+					    <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+					</dependency>
+					
+			2.启动类： 添加 @EnableCircuitBreaker 表示开启线程熔断
+					
+					SpringCloud 提供了一个注解，可以代替 Eureka、Hystrix、SpringBoot的注解
+					//@EnableDiscoveryClient
+					//@EnableCircuitBreaker
+					//@SpringBootApplication
+					@SpringCloudApplication
+					
+					
+			3.远程调用类：
+					0.类上 添加默认失败方法	@DefaultProperties(defaultFallback = "defaultFallback")
+					1.调用方法 开启线程降级	@HystrixCommand 
+						1.可配方法的 超时时长，默认1秒
+							@HystrixCommand(commandProperties = {
+								@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds",value = "2000")
+							})
+					2.调用失败(超时)，执行默认 fallbackMethod方法。	
+					3.fallbackMethod方法 返回值类型--以调用方法为准。
+					
+					@DefaultProperties(defaultFallback = "defaultFallback")
+					public class service() {
+					
+						@HystrixCommand	
+					    public User queryUserById(Long id){
+					        String url = "http://user-service/user/" + id;
+					        User user = this.restTemplate.getForObject(url, User.class);
+					        return user;
+					    }
+					
+						//fallbackMethod 方法返回值一般为String、参数列表为空。
+					    public String defaultFallback(){
+					        return "服务器忙";
+					    }
+					    
+					}
+					
+			4.配置Hystrix 全局超时时长：(可选)
+					1.application.yml添加：
+					2.配置信息在：HystrixCommandProperties类中。
+					hystrix:
+					  command:
+					  	default:
+					        execution:
+					          isolation:
+					            thread:
+					              timeoutInMillisecond: 6000 # 设置hystrix的超时时间为6000ms，默认1000ms
+					  	user-service:			
+					        execution:
+					          isolation:
+					            thread:
+					              timeoutInMillisecond: 5000 # 设置user-service服务的超时时长为6000ms
+					              
+		5.熔断机制：(默认启用)
+			熔断器三个状态：
+				Closed：所有请求正常访问。
+				Open：所有请求直接降级。进入休眠状态(5秒)，5秒后进入Half Open状态。
+				Half Open：此时释放部分请求，若这些请求都未超时，则进入 Closed；否则进入 Open。
+				
+			1.当Hystrix Command请求后端服务数量(默认20次)，失败超过一定比例(默认50%), 断路器会切换到开路状态(Open). 
+			2.Open：所有请求会直接失败而不会发送到后端服务. 断路器保持在开路状态一段时间后(默认5秒), 自动切换到半开路状态(HALF-OPEN).
+			3.Half-Open：这时会释放一些请求的返回情况, 如果请求成功, 断路器切回闭路状态(CLOSED), 否则重新切换到开路状态(OPEN). 
+
+ */					
+
 	
 
 /*						BUG 排查
