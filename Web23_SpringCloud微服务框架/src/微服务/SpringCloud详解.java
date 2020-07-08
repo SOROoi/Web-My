@@ -183,6 +183,7 @@ package 微服务;
 		1.负载均衡: 
 			发送请求后从 Eureka服务清单中获取 服务集群(通过服务名)，通过算法 从集群中选择出适合的 服务(IP+port)，帮服务消费者 发送请求到该服务中。
 			1.负载均衡算法：随机、轮询、hash，	默认轮询。
+			2.默认连接超时时长1秒。
 			
 		
 		2.Ribbon 使用：
@@ -219,7 +220,16 @@ package 微服务;
 						ribbon:
 							NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
 		
-		
+			5.ribbon配置：
+					ribbon:
+					  MaxAutoRetries: 1 #最大重试次数，当Eureka中可以找到服务，但是服务连不上时将会重试
+					  MaxAutoRetriesNextServer: 1 #切换实例的重试次数
+					  OkToRetryOnAllOperations: false # 对所有的操作请求都进行重试，如果是get则可以，如果是post,put等操作没有实现幂等的情况下是很危险的，所以设置为false
+					  ConnectTimeout: 1000 #请求连接的超时时间
+					  ReadTimeout: 1800 #请求处理的超时时间
+			
+			
+			
 	------------------------------------------------ 组件三 ------------------------------------------------------------------
 	
 	3.Hystix 熔断器
@@ -281,20 +291,24 @@ package 微服务;
 					}
 					
 			4.配置Hystrix 全局超时时长：(可选)
-					1.application.yml添加：
-					2.配置信息在：HystrixCommandProperties类中。
+					1.配置信息在：	hystrix-core.jar，com.netflix.hystrix中，HystrixCommandProperties类。
+					2.Ribbon的超时时间一定要小于Hystix的超时时间。
+					3.Greenwich.SR6版本中，超时多了一个s，为：timeoutInMilliseconds
+					
 					hystrix:
 					  command:
 					  	default:
 					        execution:
 					          isolation:
 					            thread:
-					              timeoutInMillisecond: 6000 # 设置hystrix的超时时间为6000ms，默认1000ms
+					              timeoutInMillisecond: 6000 	# 设置hystrix的超时时间为6000ms，默认1秒
+					              (timeoutInMilliseconds: 6000		Greenwich.SR6版本)
 					  	user-service:			
 					        execution:
 					          isolation:
 					            thread:
-					              timeoutInMillisecond: 5000 # 设置user-service服务的超时时长为6000ms
+					              timeoutInMillisecond: 5000 	# 设置user-service服务的超时时长为6000ms
+					              (timeoutInMilliseconds: 5000		Greenwich.SR6版本)
 					              
 		5.熔断机制：(默认启用)
 			熔断器三个状态：
@@ -305,7 +319,137 @@ package 微服务;
 			1.当Hystrix Command请求后端服务数量(默认20次)，失败超过一定比例(默认50%), 断路器会切换到开路状态(Open). 
 			2.Open：所有请求会直接失败而不会发送到后端服务. 断路器保持在开路状态一段时间后(默认5秒), 自动切换到半开路状态(HALF-OPEN).
 			3.Half-Open：这时会释放一些请求的返回情况, 如果请求成功, 断路器切回闭路状态(CLOSED), 否则重新切换到开路状态(OPEN). 
+		
+		
+	------------------------------------------------ 组件四 ------------------------------------------------------------------
 
+	4. Feign 声明式调用
+		1. Feign 是Netflix开发的声明式、模板式的HTTP客户端。它可以使调用者像 调用本地方法一样，简洁、优雅地远程调用服务。
+			1.Spring Cloud中Feign 支持 springMVC，整合了Ribbon、Hystrix. 
+
+
+		2. Feign的使用：
+			1.导入依赖：(先添加 SpringCloud 版本管理)	
+					<dependency>
+					    <groupId>org.springframework.cloud</groupId>
+					    <artifactId>spring-cloud-starter-openfeign</artifactId>
+					</dependency>
+					
+			2.启动类上：添加注解 @EnableFeignClients	--开启Feign
+					
+			3.创建Feign接口：		(该接口可调用远程方法)
+				1.远程调用4个参数：请求方式、请求URL、传入参数、返回值.
+				2.Feign底层对其动态代理
+				
+					@FeignClient("user-service")	--1.服务名，该注解 将该接口实现类对象注入IOC容器
+					public interface UserService {
+					
+					    @GetMapping("/user/{id}")	--2.请求方式、URI
+					    User queryUserById(@PathVariable("id") Long id);	--3.传入参数、返回值
+					}
+			
+			
+			4.调用接口--即调用远程方法:
+				1.Fegin中使用了负载均衡，因此可以省去 @LoadBalanced 和 注入RestTemplate.
+			
+					@Autowired
+					private UserFeignClient client;
+					
+					@GetMapping("{id}")
+					public void test(@PathVariable("id") Long id){
+						
+						User user = client.queryUserById(id);		--远程调用
+					}
+			
+			5.yml配置：
+				1.ribbon超时时长：
+					feign:
+					  client: 
+					    config: 
+					      default: 
+					        connect-timeout: 2000 	 #设置Feign ribbon连接超时时间 (连接到服务时间，默认一秒)
+					        read-timeout: 3000 	 #设置Feign ribbon读取超时时间 (建立连接后，读取数据超时，默认一秒)
+					        
+				2.开启hystrix熔断:
+					feign:
+					  hystrix:
+					    enabled: true 	#开启Feign的熔断功能
+				
+					    
+					    
+		3.Feign中启用 Hystrix熔断：
+			0.启动类：注解 @EnableCircuitBreaker
+		
+			1.配置文件：
+					feign:
+					  hystrix:
+					    enabled: true # 开启Feign的熔断功能
+			
+			
+			2.熔断方法类--实现Feign接口：(作为fallback的处理类)
+			
+					@Component		--注入IOC容器
+					public class UserFeignClientFallback implements UserService {
+						@Override
+						public User qureyUser(Long id) {
+							User user = new User();
+							user.setName("服务器忙");
+							return user;
+						}
+					}
+			
+			3.Feign接口中，指定实现类：
+					@FeignClient(value = "user-service", fallback = UserFeignClientFallback.class)
+					public interface UserService {
+						@GetMapping("/user/{id}")
+					    User queryUserById(@PathVariable("id") Long id);
+					}
+		
+		
+	------------------------------------------------ 组件五 ------------------------------------------------------------------
+	
+	5. Zuul 网关
+		1.对外提供网关的入口，不暴露服务地址；
+		2.对客户请求的负载均衡，提供路由映射。
+		3.处理权限校验问题；
+		
+		1.zuul的路由和负载均衡
+			1.导入依赖：(先添加 SpringCloud 版本管理)
+				自带web依赖、ribbon依赖、hystrix依赖。
+					<dependency>
+					    <groupId>org.springframework.cloud</groupId>
+					    <artifactId>spring-cloud-starter-netflix-zuul</artifactId>
+					</dependency>
+				
+			2.启动类：添加 @EnableZuulProxy注解，开启Zuul网关
+			
+			3.配置：
+					0.基本配置：	server.port	
+								spring.application.name	
+								eureka.client.service-url.defaultZone
+			
+			
+					0-1.Zuul对所有服务，添加了 默认的路由规则：	user-service: /user-service/**
+					
+					zuul:
+					  routes:
+					    user-service: /user-service/** 		# 服务名：映射路径 (简化写法)
+					
+					
+					
+					1.指定全局路由前缀后，发起请求时，路径就要以/api开头。
+					
+					zuul:
+					  prefix: /api		 # 全局路由前缀
+					  routes:
+					      user-service: 	# 路由id，随意写
+					        path: /user-service/** 		# 映射路径
+					        service-id: user-service 	# 指定服务名
+					        strip-prefix:false			# 去除前缀(映射到服务中时，去除path),默认true
+					  ignored-services:		# 指定服务名，不添加 默认路由规则
+					  	  - customer		
+					        
+					
  */					
 
 	
@@ -316,6 +460,7 @@ package 微服务;
 		报错：	Cannot execute request on any known server
 		
 		原因：	application.yml配置错误
+				(还有可能：配置中有tab缩进)
 				
 		错误配置：	#eureka配置
 					eureka:
@@ -330,6 +475,41 @@ package 微服务;
 					      defaultZone: http://127.0.0.1:8888/eureka
 
 		总结：	eureka客户端配置中，defaultZone 应配 EurekaServer的地址
+		
+		
+	2.Feign客户端连接超时
+		报错：	feign.RetryableException: Read timed out executing GET http://user-service/user/1
+		
+		原因：	Feign的 HTTPClient连接远程服务器超时，修改配置即可
+		
+		添加配置：	feign:
+					  client: 
+					    config: 
+					      default: 
+					        connect-timeout: 20000  #设置Feign ribbon连接超时时间(连接到服务时间，默认一秒)
+					        read-timeout: 20000  #设置Feign ribbon读取超时时间(连接服务后，读取数据超时，默认一秒)
+					        
+	3. Hystrix超时时长无效
+		原因：	Greenwich.SR6版本配置变化
+		
+		原配置：	hystrix:
+				  command:
+				  	default:
+				        execution:
+				          isolation:
+				            thread:
+				              timeoutInMillisecond: 6000 	# 设置hystrix的超时时间为6000ms，默认1秒
+				              (Finchley版本)
+			
+		现配置：	hystrix:
+				  command:
+				  	default:
+				        execution:
+				          isolation:
+				            thread:
+				              timeoutInMilliseconds: 6000 	# 设置hystrix的超时时间为6000ms，默认1秒
+				              (Greenwich.SR6版本)
+				              
 		
  */
 

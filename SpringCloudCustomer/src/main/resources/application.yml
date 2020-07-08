@@ -11,3 +11,19 @@ eureka:
     service-url:
       defaultZone: http://127.0.0.1:8888/eureka
     
+feign:
+  client: 
+    config: 
+      default: 
+        connect-timeout: 1000  #设置Feign连接超时时间
+        read-timeout: 4000  #设置Feign读取超时时间
+  hystrix:
+    enabled: true # 开启Feign的熔断功能
+    
+hystrix:
+  command:
+    default:
+        execution:
+          isolation:
+            thread:
+              timeoutInMilliseconds: 4000 # 设置hystrix的超时时间为6000ms，默认1000ms
