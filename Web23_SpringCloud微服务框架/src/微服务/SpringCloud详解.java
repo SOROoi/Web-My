@@ -221,8 +221,11 @@ package 微服务;
 							NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
 		
 			5.ribbon配置：
+					1.ribbon配置信息在 AbstractRibbonCommand 类中
+					2.ribbon超时时长 = (connect + read)*2		--(Read + Connect)* (maxAutoRetries + 1) * (maxAutoRetriesNextServer + 1);
+					
 					ribbon:
-					  MaxAutoRetries: 1 #最大重试次数，当Eureka中可以找到服务，但是服务连不上时将会重试
+					  MaxAutoRetries: 0 #最大重试次数，当Eureka中可以找到服务，但是服务连不上时将会重试
 					  MaxAutoRetriesNextServer: 1 #切换实例的重试次数
 					  OkToRetryOnAllOperations: false # 对所有的操作请求都进行重试，如果是get则可以，如果是post,put等操作没有实现幂等的情况下是很危险的，所以设置为false
 					  ConnectTimeout: 1000 #请求连接的超时时间
@@ -448,9 +451,68 @@ package 微服务;
 					        strip-prefix:false			# 去除前缀(映射到服务中时，去除path),默认true
 					  ignored-services:		# 指定服务名，不添加 默认路由规则
 					  	  - customer		
-					        
 					
+					        
+		2.Zuul的过滤器 ZuulFilter
+			1. ZuulFilter 是过滤器的顶层抽象类。常用于权限校验。
+			
+			2. ZuulFilter 中最重要的4个方法：
+				1.返回过滤器类型：	FilterConstants.PRE_TYPE	--请求在被路由之前执行
+									FilterConstants.ROUTE_TYPE	--在路由请求时调用，此过滤器将请求路由到微服务
+									FilterConstants.POST_TYPE	--此过滤器在路由到微服务以后执行。
+									FilterConstants.ERROR_TYPE	--在其他阶段发生错误时执行该过滤器，之后执行POST过滤器
+					abstract public String filterType();
+					
+					
+				2.返回过滤器执行顺序：数字小，优先级高
+									FilterConstants中常量	--校验放在处理请求头前：FilterConstants.PRE_DECORATION_FILTER_ORDER - 1	
+			    	abstract public int filterOrder();
+			    	
+			    	
+			    3.返回过滤器是否执行：	true-执行
+			    					false-不执行
+			    	boolean shouldFilter();		// 来自IZuulFilter
+			
+				
+				4.过滤器的执行逻辑：
+			    	Object run() throws ZuulException;		// IZuulFilter
+			
+			
+			3.过滤器执行生命周期：(见图片)
+				pre---route---post
+				 |------|------|-error
+				 
+				 
+			4. Zuul 过滤器的使用:
+				1.自定义过滤器：继承 ZuulFilter 抽象类。
+						自定义过滤器实现4个方法：
+						abstract public String filterType();
+					    abstract public int filterOrder();
+					    boolean shouldFilter();
+					    Object run() throws ZuulException;
+				    
+				2.注入到IOC容器：添加 @Component 注解。
+				
+				
+						(StringUtils工具：apache下的commons-lang3.jar，可以方便的操作字符串的工具类)
+						@Override
+						public Object run() throws ZuulException {
+							// 1.获得request对象
+							RequestContext requestContext = RequestContext.getCurrentContext();
+							HttpServletRequest request = requestContext.getRequest();
+							// 2.获得参数access-token的value
+							String token = request.getParameter("access-token");
+							if (StringUtils.isBlank(token)) {
+								// 若access-token不存在、为空，则不执行
+								requestContext.setSendZuulResponse(false);
+								// 返回状态码
+								requestContext.setResponseStatusCode(HttpStatus.FORBIDDEN.value());
+							}
+							return null;
+						}
+				    
  */					
+
 
 	
 
