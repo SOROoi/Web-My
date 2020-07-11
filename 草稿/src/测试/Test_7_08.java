@@ -2,9 +2,10 @@ package 测试;
 
 import java.util.Arrays;
 
-public class Test_7_1 {
+public class Test_7_08 {
 
 	public static void main(String[] args) {
+		// TODO Auto-generated method stub
 		int[] arr = { 21, 48, 7, 254, 87, 14, 11, 35, 88, 77, 65 };
 //		bubble(arr);
 //		select(arr);
@@ -39,9 +40,9 @@ public class Test_7_1 {
 		}
 
 		int i, j, index;
+		index = arr[left];
 		i = left;
 		j = right;
-		index = arr[left];
 
 		while (i != j) {
 			while (i < j && arr[j] > index) {
@@ -87,4 +88,5 @@ public class Test_7_1 {
 			}
 		}
 	}
+
 }

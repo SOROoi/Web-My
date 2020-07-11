@@ -2,7 +2,7 @@ package 测试;
 
 import java.util.Arrays;
 
-public class Test_7_6 {
+public class Test_7_06 {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

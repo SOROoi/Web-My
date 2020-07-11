@@ -2,9 +2,7 @@ package 测试;
 
 import java.util.Arrays;
 
-import 排序.QuickSort;
-
-public class Test_7_5 {
+public class Test_7_11 {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -13,16 +11,16 @@ public class Test_7_5 {
 //		select(arr);
 		quick(arr, 0, arr.length - 1);
 		System.out.println(Arrays.toString(arr));
-		System.out.println(binary(arr, 254));
+		System.out.println(binary(arr, 7));
 	}
 
 	private static int binary(int[] arr, int i) {
 		// TODO Auto-generated method stub
 		int low = 0;
-		int high = arr.length - 1;
+		int high = arr.length;
 		while (low <= high) {
 			int mid = low + (high - low) / 2;
-			if (arr[mid] == i) {
+			if (i == arr[mid]) {
 				return mid;
 			}
 			if (i > arr[mid]) {

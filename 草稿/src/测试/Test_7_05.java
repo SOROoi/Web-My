@@ -1,7 +1,10 @@
 package 测试;
+
 import java.util.Arrays;
 
-public class Test_7_2 {
+import 排序.QuickSort;
+
+public class Test_7_05 {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -37,6 +40,7 @@ public class Test_7_2 {
 		if (left >= right) {
 			return;
 		}
+
 		int i, j, index;
 		index = arr[left];
 		i = left;
@@ -57,8 +61,8 @@ public class Test_7_2 {
 			arr[i] = arr[j];
 			arr[j] = tem;
 		}
-		quick(arr, left, i - 1);
 		quick(arr, i + 1, right);
+		quick(arr, left, i - 1);
 	}
 
 	private static void select(int[] arr) {

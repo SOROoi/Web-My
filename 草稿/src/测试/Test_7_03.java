@@ -2,7 +2,7 @@ package 测试;
 
 import java.util.Arrays;
 
-public class Test_7_8 {
+public class Test_7_03 {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -11,7 +11,7 @@ public class Test_7_8 {
 //		select(arr);
 		quick(arr, 0, arr.length - 1);
 		System.out.println(Arrays.toString(arr));
-		System.out.println(binary(arr, 254));
+		System.out.println(binary(arr, 0));
 	}
 
 	private static int binary(int[] arr, int i) {
