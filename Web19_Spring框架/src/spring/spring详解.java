@@ -209,11 +209,11 @@ package spring;
 	        bean标签的scope属性：
 		            作用：用于指定bean的作用范围
 		            取值： 常用的就是单例的和多例的
-		                singleton：单例的（默认值）
-		                prototype：多例的
-		                request： web项目中，每个http request新建一个bean
-		                session： web项目中，每个http session新建一个bean
-		                global-session：每个global http session新建一个bean,作用于集群环境的会话范围（全局会话范围），当不是集群环境时，它就是session
+	                singleton：单例的（默认值）
+	                prototype：多例的
+	                request： web项目中，每个http request新建一个bean
+	                session： web项目中，每个http session新建一个bean
+	                global-session：每个global http session新建一个bean,作用于集群环境的会话范围（全局会话范围），当不是集群环境时，它就是session
 	
 		    <bean id="accountService" class="com.itheima.service.impl.AccountServiceImpl" scope="prototype"></bean>
 		    -->

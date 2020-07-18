@@ -56,6 +56,7 @@ import redis.clients.jedis.Jedis;
 				劣势：需要对整个图做计算才能得出结果，不容易做分布式的集群方案。
  */
 
+
 /*						Redis 数据库	
 	
 	0.Redis是什么?
@@ -91,6 +92,7 @@ import redis.clients.jedis.Jedis;
 	3.
 		
  */
+
 
 /*						Linux安装 redis、启动redis
 
@@ -142,16 +144,16 @@ import redis.clients.jedis.Jedis;
 		redis-cli shutdown  							--停止redis
 		ps -ef | grep -i redis							--查看服务是否启动，6379端口
 		
-		redis-cli										--连接本地redis服务器
-		redis-cli -h 127.0.0.1 -p 6379					--连接远程redis服务器
+		/usr/local/redis/bin/redis-cli					--连接本地redis服务器
+		./redis-cli -h 127.0.0.1 -p 6379					--连接远程redis服务器
 		(连接后窗口)ping									--测试客户端与redis连接是否正常,正常则回复pong
 		(连接后窗口)exit/quit								--断开连接 (或Ctrl+C)
 		
 		
-		# 卸载redis：
-		rm -rf /usr/local/redis 			--删除安装目录
-		rm -rf /usr/bin/redis-* 			--删除所有redis相关命令脚本
-		rm -rf /root/download/redis-4.0.4 	--删除redis解压文件夹
+		（# 卸载redis：
+			rm -rf /usr/local/redis 			--删除安装目录
+			rm -rf /usr/bin/redis-* 			--删除所有redis相关命令脚本
+			rm -rf /root/download/redis-4.0.4 	--删除redis解压文件夹）
   			
   	4.重要的3个可执行文件：(安装目录bin包下)
 		redis-server：	Redis服务器程序
@@ -173,8 +175,9 @@ import redis.clients.jedis.Jedis;
 
 */
 
+
 /*						Redis 数据结构、命令、持久化
- * 
+
 	1.Redis 的数据		
 		存储数据格式为key-value：	key都是字符串，value有5种不同的数据结构
 		
@@ -191,9 +194,11 @@ import redis.clients.jedis.Jedis;
 		1. 存储： set key value
 			127.0.0.1:6379> set username zhangsan
 			OK
+			
 		2. 获取： get key
 			127.0.0.1:6379> get username
 			"zhangsan"
+			
 		3. 删除： del key
 			127.0.0.1:6379> del age
 			(integer) 1
@@ -204,6 +209,7 @@ import redis.clients.jedis.Jedis;
 			(integer) 1
 			127.0.0.1:6379> hset myhash password 123
 			(integer) 1
+			
 		2. 获取： 
 			* hget key field: 获取指定的field对应的值
 				127.0.0.1:6379> hget myhash username
@@ -225,19 +231,20 @@ import redis.clients.jedis.Jedis;
 			1. lpush key value: 将元素加入列表左表
 				
 			2. rpush key value：将元素加入列表右边
-				
 				127.0.0.1:6379> lpush myList a
 				(integer) 1
 				127.0.0.1:6379> lpush myList b
 				(integer) 2
 				127.0.0.1:6379> rpush myList c
 				(integer) 3
+				
 		2. 获取：
 			* lrange key start end ：范围获取
 				127.0.0.1:6379> lrange myList 0 -1
 				1) "b"
 				2) "a"
 				3) "c"
+				
 		3. 删除：
 			* lpop key： 删除列表最左边的元素，并将元素返回
 			* rpop key： 删除列表最右边的元素，并将元素返回
@@ -249,10 +256,13 @@ import redis.clients.jedis.Jedis;
 			(integer) 1
 			127.0.0.1:6379> sadd myset a
 			(integer) 0
-		2. 获取：smembers key:获取set集合中所有元素
+			
+		2. 获取：smembers key:	获取set集合中所有元素
 			127.0.0.1:6379> smembers myset
 			1) "a"
-		3. 删除：srem key value:删除set集合中的某个元素	
+			
+			
+		3. 删除：srem key value:	删除set集合中的某个元素	
 			127.0.0.1:6379> srem myset a
 			(integer) 1
 			
@@ -266,6 +276,7 @@ import redis.clients.jedis.Jedis;
 			(integer) 1
 			127.0.0.1:6379> zadd mysort 80 wangwu
 			(integer) 1
+			
 		2. 获取：zrange key start end [withscores]
 			127.0.0.1:6379> zrange mysort 0 -1
 			1) "lisi"
@@ -279,6 +290,7 @@ import redis.clients.jedis.Jedis;
 			4) "80"
 			5) "lisi"
 			6) "500"
+			
 		3. 删除：zrem key value
 			127.0.0.1:6379> zrem mysort lisi
 			(integer) 1

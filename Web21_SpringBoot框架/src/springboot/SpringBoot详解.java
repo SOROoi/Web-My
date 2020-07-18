@@ -16,17 +16,42 @@ package springboot;
 
 	3. SpringBoot的核心功能
 	
-		1.起步依赖：	起步依赖本质上是一个Maven项目对象模型（Project Object Model，POM），就是将具备某种功能的坐标打包到一起，并提供
-				      一些默认的功能。
+		1.起步依赖：	将此前混乱的依赖关系、版本关系整合，将相同功能的依赖包、版本关系整合到一起，作为 SpringBoot的一个启动器。
 
-		2.自动配置：	Spring Boot的自动配置是一个运行时（更准确地说，是应用程序启动时）的过程，考虑了众多因素，才决定Spring配置应该用
-				      哪个，不该用哪个。该过程是Spring自动完成的。
-				      
-	4. Spring boot参考文档
+		2.自动配置：	1.Spring Boot自动配置，是基于 引入的启动器，自动使用其对应配置。该过程是Spring自动完成的。
+					2.但通过自己设置参数（.properties），也可以自定义配置。
+				   	3.自动配置由启动器决定。
+				
+		3.spring-boot-starter-parent:
+					其版本即 SpringBoot版本，它提供了 SpringBoot启动器、依赖包、插件的版本管理。
+		
+		
+		
+	4.spring-boot-starter-web的功能
+	
+		1.其中有 springMVC框架、spring框架、log日志、JSON处理、tomcat等功能，及其依赖包。
+		
+		2.其中有 SpringBoot自动配置--功能核心包：	spring-boot-autoconfigure-x.x.x.jar
+		
+			1. @SpringBootApplication注解 就在此包中。
+				--@SpringBootConfiguration
+				--@ComponentScan
+				--@EnableAutoConfiguration
+		  
+		  	2.自动配置：
+		  		通过 @SpringBootApplication -- @EnableAutoConfiguration -- AutoConfigurationImportSelector类
+		  			-- getCandidateConfigurations()方法 -- 调用 SpringFactoriesLoader类(spring-core.jar包中) --
+		  			
+		  			-- 读取"META-INF/spring.factories"中指定的配置类类名，并加载这些类中的配置
+		  
+		  
+		  
+		  
+	*. Spring boot参考文档
 		网址：https://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/html/index.html
 
 
-	5. Spring Tools4介绍：(原文链接：https://blog.csdn.net/zyplanke/article/details/104235750)
+	*. Spring Tools4介绍：(原文链接：https://blog.csdn.net/zyplanke/article/details/104235750)
 		最新的STS4：
 			官方地址为：https://spring.io/tools    (现在官方名字中已经少了Suite这个单词，仅为Spring Tools)
 			
@@ -157,7 +182,7 @@ package springboot;
 			2.注该类是Spring的一个配置类，(@SpringBootConfiguration，等同 @Configuration)
 			3.同级包及其子包下的类 都被 扫描IOC，	(@ComponentScan)
 			4.启动自动配置，	(@EnableAutoConfiguration	加载 application.properties 配置)
-								(默认配置在：spring-boot-autoconfigure-2.1.15.RELEASE.jar/META-INF/spring-configuration-metadata.json)
+							(默认配置在：spring-boot-autoconfigure-2.1.15.RELEASE.jar/META-INF/spring-configuration-metadata.json)
 
 
 		2. @Value("${name}")
@@ -291,16 +316,18 @@ package springboot;
  */
 
 
-/*								整合 spring事务和 JDBC连接池
-	1.导入启动器依赖：
+/*								整合 spring事务、连接池
+	1.启动器依赖：
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-jdbc</artifactId>
 			</dependency>
 			
 	2.依赖包介绍：
-		该起步依赖包含了 spring-jdbc.jar  spring-tx.jar，导入即可使用 spring的事务。
-		此外还包含了 HikariCP.jar，HikariCP 连接池(目前最快的连接池)。
+		1.该起步依赖包含了事务、 HikariCP连接池(目前最快的连接池)。
+		2.底层包含了：	spring-jdbc.jar
+		  				spring-tx.jar
+			 			HikariCP.jar
 		
 	3.我们只需要配置：
 		# 连接四大参数
@@ -320,14 +347,18 @@ package springboot;
 /*								通用 Mapper
 			
 	1.介绍：
-		1.使用通用Mapper，自动生成 单表操作的通用方法，无需再自己定义。
-		2.底层使用了 Mybatis启动器、jdbc启动器。
+		1.github：	https://github.com/abel533/Mapper
+		
+		1.通用 Mapper，自动生成 单表操作的通用方法，无需再自己定义。
 		    无需配置 Mybatis驼峰，只需配置 Mybatis别名包(如果使用)。
-		3.通用 Mapper github网站：https://github.com/abel533/Mapper
+		    
+		3.底层包含了:		mybatis.jar
+						mybatis-spring.jar
+						spring-boot-starter-jdbc.jar;
 
-	2.通用Mapper
-		通用Mapper的作者也为自己的插件编写了启动器，我们直接引入即可：
-			dependency>
+	2.通用Mapper启动器
+		通用Mapper的作者也为自己的插件编写了启动器：
+			<dependency>
 				<groupId>tk.mybatis</groupId>
 				<artifactId>mapper-spring-boot-starter</artifactId>
 				<version>2.0.2</version>
@@ -373,6 +404,8 @@ package springboot;
 
 /*								整合 Redis
 
+	--详细使用见：黑马57期/微服务电商Day15
+
 	1.导入起步依赖：
 			<!-- 配置使用redis启动器 -->
 			<dependency>
@@ -388,6 +421,7 @@ package springboot;
 
 
 	3.注入RedisTemplate测试redis操作
+		1.导入启动器后，spring自动将 RedisTemplate注入到IOC容器中。(已测)
 	
 			@RunWith(SpringRunner.class)
 			@SpringBootTest(classes = SpringbootJpaApplication.class)
