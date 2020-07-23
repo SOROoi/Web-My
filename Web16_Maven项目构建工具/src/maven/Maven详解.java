@@ -119,7 +119,7 @@ package maven;
 				Clean
 				
 			2.Default生命周期
-				Compile   test  package  install  deploy(发布到私服)
+				Compile   test  package(target目录)  install(本地仓库)  deploy(发布到私服)
 				
 			3.Site生命周期
 				Site (在target下生成site文件夹,其中生成项目的站点文档)

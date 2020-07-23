@@ -26,6 +26,6 @@ hystrix:
               
 ribbon:
   ConnectTimeout: 1000 #请求连接的超时时间
-  ReadTimeout: 4800 #请求处理的超时时间
+  ReadTimeout: 1000 #请求处理的超时时间
   
 

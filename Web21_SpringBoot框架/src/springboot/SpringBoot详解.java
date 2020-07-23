@@ -155,7 +155,7 @@ package springboot;
  */
 
 
-/*								 热部署、常用注解、springboot中注入外部Bean(spring纯注解)/注入属性
+/*								 热部署、常用注解、注入外部Bean(spring纯注解)/注入属性
  * 
 	1.热部署
 		1.修改代码后不重启就能生效，称之为热部署。
@@ -283,6 +283,38 @@ package springboot;
 				
 				}
  */
+
+
+/*								注册 springMVC组件
+					
+
+	1.自定义组件、拓展组件：
+		HandlerMapping、HandlerAdapter、ViewResolver
+		HandlerExceptionResolver、HandlerInterceptor、Converter、MultipartResolver
+		
+		1.可拓展组件：需要考虑 是否要实现接口
+		2.可拓展组件：需要手动注入IOC容器(xml、注册到WebMvcConfigurer(SpringBoot中))
+		
+		
+	2.SpringBoot中使用组件：
+		1.配置类：
+			1.实现`WebMvcConfigurer`并添加`@Configuration`注解。
+
+		2.注册组件：
+			1.通过 WebMvcConfigurer方法注册组件。
+			
+		3.例：
+				@Configuration
+				public class MvcConfig implements WebMvcConfigurer {
+				
+					@Override
+					public void addInterceptors(InterceptorRegistry registry) {
+						HandlerInterceptor interceptor = new MyInterceptor();
+						registry.addInterceptor(interceptor).addPathPatterns("/**");	//注册拦截器，设置拦截路径
+					}
+				}
+			
+*/
 
 
 /*								整合 Mybatis
@@ -459,6 +491,196 @@ package springboot;
 			}
 
  */
+
+
+/*								使用 Lombok
+
+	1. Lombok 的作用
+		1. lombok 是一个开发工具，内置许多注解如：@Data
+		2. 使用 lombok注解可以减少开发代码。
+		
+		
+	2.常用注解：
+	
+		1. @Data
+			1.位置：注解在类上。
+			2.作用：	1.为所有属性自动生成 getter/setter、equals、canEqual、hashCode、toString方法。
+					2.若属性为 final，则不会为该属性生成 setter方法。
+					3.等同于 @Getter + @Setter + @EqualsAndHashCode + @ToString + @RequiredArgsConstructor
+
+		2. @Getter/@Setter/@Accessors
+			1.位置：注解在属性上。
+			2.作用：	1.为相应的属性自动生成 Getter/Setter方法。
+					2.使用 @Accessors 注解可以让set方法返回类本身，从而实现链式风格编程。
+			
+		3. @NonNull
+			1.位置：注解在属性 或 构造器参数上。
+			2.作用：	1.生成一个非空的声明，可用于校验参数，避免空指针。
+			3.例：
+					public class Bean{
+					  private String name;
+					  
+					  public Bean(@NonNull String name) {
+					    this.name = name;
+					  }
+					}
+			
+		4. @Cleanup
+			1.位置：注解在对象上。
+			2.作用：	1.帮助我们自动调用该对象的 close()方法。
+			3.例：
+					@Cleanup 
+					InputStream in = new FileInputStream(args[0]);
+
+		5. @EqualsAndHashCode
+			1.位置：注解在类上。
+			2.作用：	1.使用所有非静态（static）和非瞬态（transient）属性来生成 equals和 hasCode，
+					2.也能通过 exclude来排除一些属性。
+			3.例：	
+					@EqualsAndHashCode(exclude={"id", "shape"})
+					public class Bean{}
+					
+		6. @ToString
+			1.位置：注解在类上。
+			2.作用：	1.自动生成一个toString()方法。
+					2.默认情况下，会输出类名、所有属性（按照属性定义顺序），用逗号来分割。
+					3.通过 includeFieldNames参数设为 true，就能明确的输出toString()属性。
+					4.通过 exclude = {"column","column2"}，可以排除column,column2 属性。
+			3.例：
+					@ToString(exclude = {"column","column2"}, includeFieldNames=true, callSuper=true)
+					public class Bean{}
+					
+		7. @NoArgsConstructor、@RequiredArgsConstructor、@AllArgsConstructor
+			1.位置：注解在类上。
+			2.作用：	1.生成 无参构造。
+					2.生成 部分参数构造。
+					3.生成 全参构造。
+		
+	3.使用：
+		1.导入依赖：
+			lombok.jar
+			
+		2.安装 Lombok插件：
+			1.IDE为 Eclipse：
+				1.从官网下载lombok.jar。
+					1.下载地址：https://projectlombok.org/download
+					2.eclipse需要在英文路径下
+				2.双击下载好的lombak.jar，安装。
+					1.点击 Specify location..
+					2.选择 eclipse的安装目录
+					3.点击 Install / Update
+				3.确认是否安装：
+					1.eclipse安装路径下是否多了一个lombok.jar包
+					2.配置文件 eclipse.ini中是否有：
+						-javaagent:D:\Program Files (x86)\eclipse-jee-neon-1a-win32-x86_64\eclipse\lombok.jar
+			2.IDE为 Idea。
+			
+		3.更新项目，使用注解。
+			
+*/
+
+
+/*								ResponseEntity(RESTful)、通用异常处理
+
+					(测试代码在：SpringCloudCustomer/wxt/controller/TestErrorController中)
+	
+	1.ResponseEntity<Bean> 代替 Bean		----作为返回值	
+		1.一个响应包括：响应行(状态码)、响应头、响应体(数据)
+		
+		2.@ResponseBody：数据序列化后，存入响应体。
+		
+		3.Bean：响应体数据。
+		
+		4.ResponseEntity<Bean>：代表：响应实体<响应体数据>。包含响应行、响应头、响应体。
+		
+		
+		5.ResponseEntity<Item>：							----RESTful风格要求响应 状态码、响应体
+			1.响应实体类，属于springMVC框架 spring-web.jar包。
+			2.可以设置状态码、响应体。
+			3.使用 作为返回值：
+			
+				@GetMapping("/addCommodit/{price}/{name}")
+				public ResponseEntity<Item> add(@PathVariable(name = "price", required = true) Integer price,
+						@PathVariable(name = "name", required = true) String name) {
+					if (StringUtils.isBlank(name) || (price == null)) {			//commons-lang3下工具包
+						return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+					}
+					Item i = new Item(Math.random() * 1000 + "", name, price);
+			
+					return ResponseEntity.status(HttpStatus.CREATED).body(i);	//返回响应实体，包含状态码、响应体
+				}
+				
+				注：
+					1.ResponseEntity.status(status)方法中：status 可以为 HttpStatus或 int。
+				
+		
+		
+	2.客户端工具--Insomnia
+		该工具可发送 RESTful风格请求，获得响应。
+	
+	
+	
+	3.通用异常处理：						----该处理方式的异常 一般是发送给前端或用户，告知错误(通常设计为 运行时异常)
+		1.目的：对所有 Controller中的异常进行处理。
+		
+		2.技术：使用 AOP技术，对所有 Controller进行增强。
+		
+		3.实现：	1.MVC框架提供了 @ControllerAdvice注解----类上----处理所有标注 @Controller的处理器异常。
+				2.和 @ExceptionHandler(Class ex)注解----方法----处理 Class匹配的异常。
+			
+				
+		1:流程：
+			1.依赖：spring-webmvc.jar
+			
+			2.自定义 异常处理通知类：
+				1.@ControllerAdvice注解。
+				2.@ExceptionHandler(Class ex)注解。
+				
+			3.例：
+				1.自定义 异常处理通知类：
+					@ControllerAdvice	//处理所有标注 @Controller的处理器异常
+					public class CommonExceptionHandler {
+					
+						 // @ExceptionHandler	声明异常.Class，处理 RuntimeException异常
+						 // @param	产生的异常对象
+						 // @return	异常处理结果
+						@ExceptionHandler(RuntimeException.class)
+						public ResponseEntity<String> handleException(RuntimeException ex){
+							
+							return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+						}
+					}
+					
+				2：Controller:
+					@RestController
+					public class TestErrorController {
+						
+						@GetMapping
+						public ResponseEntity<Item> get() {
+							throw new RuntimeException("请求有误");		//抛出 RuntimeException异常
+							...
+							return ResponseEntity.status(HttpStatus.CREATED).body(i);;
+						}
+					
+					}
+		
+		2.优化：
+			1.原因：	1.Controller中抛出的 异常信息为硬编码。
+					2.所有 Runtime异常 处理结果相同，应该按异常信息 分别处理。
+					3.处理结果封装为 JSON。
+			
+			2.解决方案：
+					1.自定义 异常(类)---内含异常信息。	(处理工程中所有 Runtime异常，都使用此异常)
+					2.自定义 异常信息(枚举类)。
+					3.自定义 异常结果Bean。
+					
+			3.例：
+				1.自定义 异常信息(枚举类)：
+				
+				2.自定义 异常(类)：
+				
+				3.自定义 异常结果Bean.
+*/
 
 
 /*								异常

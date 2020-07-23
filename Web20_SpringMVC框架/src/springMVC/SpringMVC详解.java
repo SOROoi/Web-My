@@ -9,13 +9,18 @@ package springMVC;
 					 2.springMVC 核心控制器 DispatcherServlet, 核心 Servlet,
 					 3.与 DispatcherServlet 交互：HandlerMapping	HandlerAdapter ViewResolver,
 					 
-					 4.使用mvc框架：		1.web.xml:				配置DispatcherServlet，配置spring-mvc.xml
+					 4.可拓展组件：HandlerExceptionResolver、HandlerInterceptor、Converter、MultipartResolver
+					 			 (异常处理器、拦截器、类型转换器、文件解析器)
+					 		1.可拓展组件：需要考虑 是否要实现接口
+							2.可拓展组件：需要手动注入IOC容器(xml、注册到WebMvcConfigurer(SpringBoot中))。
+					 
+					 5.使用mvc框架：		1.web.xml:				配置DispatcherServlet，配置spring-mvc.xml
 					 					2.spring-mvc.xml:		开启IOC注解
 					 											注入ViewResolver
 					 											过滤静态资源
 																开启注解，注入HandlerMapping HandlerAdapter	
 																
-					 5.依赖包：		1.spring-web
+					 6.依赖包：		1.spring-web
 									2.spring-webmvc
 									3.servlet-api	
 					 			
@@ -531,32 +536,22 @@ package springMVC;
  */
 
 
-/*								 SpringMVC 常用注解、测试注解报错
+/*								 常用注解、测试注解报错
  * 
 	1. @RequestParam
-		1. 作用：绑定 指定名称 参数 。请求参数 方法参数 名称可以不一致。
+		1. 作用：绑定 指定名称 参数 。
 		2. 属性：
-			1. value：请求参数中的名称
-			2. required：请求参数中是否必须提供此参数，默认值是true，必须提供
+				1. value：请求参数名称
+				2. required：是否必须，默认值是true，必须提供
+				3. defaultValue: 默认值
 		3. 代码如下：
 					@RequestMapping(path="/hello")
 					public String sayHello(@RequestParam(value="username",required=false)String name) {
 						System.out.println(name);
 						return "success";
 					}
-	
-	2. @RequestBody
-		1. 作用：获取post 请求体（注意：get请求方式不可以）
-		2. 属性：
-			1. required：是否必须有请求体，默认值是true
-		3. 代码如下：
-					@RequestMapping(path="/hello")
-					public String sayHello(@RequestBody String body) {
-						System.out.println(body);
-						return "success";
-					}
 
-	3. @PathVariable
+	2. @PathVariable
 		1. 作用：绑定url中 占位符中数据。
 		
 				例如：	@RequestMapping(path="/hello/{id}/{name}")
@@ -567,6 +562,8 @@ package springMVC;
 				
 		2. 属性：
 			1. value：指定url中的占位符名称
+			2. required：是否必须，默认值是true，必须提供
+			
 		3. Restful风格的URL：
 			1. 请求路径一样，可以根据不同的请求方式去执行后台的不同方法
 			2. restful风格的URL优点：
@@ -581,36 +578,58 @@ package springMVC;
 						return "success";
 					}
 
-	4. @RequestHeader		（用处不大）
+	3. @RequestHeader		（用处不大）
 		1. 作用：获取指定请求头的值
 		2. 属性:
-			1. value：请求头的名称
+				1. value：请求头的名称
 		3. 代码如下:
 					@RequestMapping(path="/hello")
 					public String sayHello(@RequestHeader(value="Accept") String header) {
 						System.out.println(header);
 						return "success";
 					}
+	
+	4. @RequestBody
+		1. 作用：获取post 请求体（注意：get请求方式不可以）
+		2. 属性：
+				1. required：是否必须有请求体，默认值是true
+		3. 代码如下：
+					@RequestMapping(path="/hello")
+					public String sayHello(@RequestBody String body) {
+						System.out.println(body);
+						return "success";
+					}
 
 	5. @CookieValue
 		1. 作用：获取请求中 指定cookie名称的值
 		2. 属性：
-			1. value：cookie的名称
+				1. value：cookie的名称
 		3. 代码：
 					@RequestMapping(path="/hello")
 					public String sayHello(@CookieValue(value="JSESSIONID") String cookieValue) {
 						System.out.println(cookieValue);
 						return "success";
 					}
+					
+	6. @ResponseBody
+		1. 作用:	1.将Java对象序列化，放到 响应体中。
+				2.响应体数据类型，由 HttpMessageConverter(消息转换器)决定。如：json、xml
+		2. 属性：
+				1. required：是否必须有响应体内容，默认true
+		3. 代码如下：
+					@RequestBody
+					public User show(User user){
+						return user;
+					}
 	
-	6. @ModelAttribute
+	7. @ModelAttribute
 		1. 作用
-			1. 出现在方法上：先执行该方法，再执行 控制器方法。
-			2. 出现在参数上：获取指定的数据给参数赋值。
+				1. 出现在方法上：先执行该方法，再执行 控制器方法。
+				2. 出现在参数上：获取指定的数据给参数赋值。
 		2. 应用场景：
-			1. 方法上：当提交表单数据不是完整的实体数据时，保证没有提交的字段使用 @ModelAttribute方法 返回的数据。
+				1. 方法上：当提交表单数据不是完整的实体数据时，保证没有提交的字段使用 @ModelAttribute方法 返回的数据。
 		3. 具体的代码：
-			1. 修饰方法，有返回值：(出现在方法1上(有返回值))
+				1. 修饰方法，有返回值：(出现在方法1上(有返回值))
 					@ModelAttribute	
 					public User showUser(String name) {
 						System.out.println("showUser执行了...");
@@ -627,7 +646,7 @@ package springMVC;
 						System.out.println(user);
 						return "success";
 					}
-			2. 修饰方法，没有返回值：(出现在方法1上(无返回值)、出现在方法2参数上)
+				2. 修饰方法，没有返回值：(出现在方法1上(无返回值)、出现在方法2参数上)
 					@ModelAttribute	
 					public void showUser(String name,Map<String, User> map) {
 						System.out.println("showUser执行了...");
@@ -645,15 +664,15 @@ package springMVC;
 						return "success";
 					}
 
-	7. @SessionAttributes()
+	8. @SessionAttributes()
 		1. 作用：
-			1.出现在类上：添加 key，将Model集合中 key数据 存入到session域对象中。
-			2.Model接口(框架提供)：
-				1.实现类 ModelMap、ExtendedModelMap。
-				2.是 Map集合,将数据存入request域中。
-				3.想使用时，在方法参数上定义即可。
+				1.出现在类上：添加 key，将Model集合中 key数据 存入到session域对象中。
+				2.Model接口(框架提供)：
+					1.实现类 ModelMap、ExtendedModelMap。
+					2.是 Map集合,将数据存入request域中。
+					3.想使用时，在方法参数上定义即可。
 		2. 属性：
-			1. value：指定存入属性的名称
+				1. value：指定存入属性的名称
 		3. 代码如下：
 					@Controller
 					@RequestMapping(path="/anno")
@@ -777,12 +796,12 @@ package springMVC;
 						
 		3.页面: 编写JQ代码，发送ajax请求。
 		
-		4.处理器Controller：
+		4.Controller：
 				--- 获取json数据，转为bean对象。
 				--- springmvc框架 支持将json转为bean。		(条件：json的key名  与 bean的属性名  相同)
 				
 				准备：
-					0. 导包：							(mvc框架 json 转 bean 依赖包)
+				0. 导包：								(mvc框架 json 转 bean 依赖包)
 							1. jackson-databind
 							2. jackson-core
 							3. jackson-annotations
@@ -816,7 +835,7 @@ package springMVC;
 		3.如果需要直接访问，可以放在和WEB-INF同级目录下。 
  */
 
-/*								 SpringMVC 实现文件上传	(--见: Web20_SpringMVC_Day2_FileUpload)								 
+/*								 SpringMVC 实现文件上传 MultipartResolver	(--见: Web20_SpringMVC_Day2_FileUpload)								 
  * 
  	1.表单数据/文件上传 的必要前提：
  		A form 表单的 enctype = "multipart/form-data"			---请求体为 分界符划分/几个部分的描述
@@ -908,7 +927,7 @@ package springMVC;
 				
 	
 	2. springMVC方式 处理上传文件
-		1.原理：	利用 MVC框架的 文件解析器 MultipartFile，获得文件项 MultipartFile upload。
+		1.原理：	利用 MVC框架的 文件解析器 MultipartResolver，获得文件项 MultipartFile upload。
 				request ————> 前端控制器 ————> 文件解析器 ————> 得到upload对象 ————> 处理器Controller
 		
 		2.需要：	1.导Commons-fileupload包.
@@ -1006,7 +1025,7 @@ package springMVC;
 		通过手段减少运行时异常的发生。系统的 dao、service、controller 出现都通过 throws Exception 向上抛出，最后由 springmvc 前端
 		控制器 交由 异常处理器 进行异常处理.
 	
-	
+	2. springmvc从容器中取自定义异常处理器时，是通过指定的id去取的，这个id默认是handlerExceptionResolver。
 	-------------------------------------------------------------------------------------------------------------------
 	2.SpringMVC 异常处理 步骤
 	

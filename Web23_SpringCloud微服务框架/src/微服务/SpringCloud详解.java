@@ -221,15 +221,15 @@ package 微服务;
 							NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
 		
 			5.ribbon配置：
-					1.ribbon配置信息在 AbstractRibbonCommand 类中
-					2.ribbon超时时长 = (connect + read)*2		--(Read + Connect)* (maxAutoRetries + 1) * (maxAutoRetriesNextServer + 1);
+					1.ribbon 配置信息： AbstractRibbonCommand 类。
+					2.ribbon 超时时长 = (connect + read)*2		--(Read + Connect)* (maxAutoRetries + 1) * (maxAutoRetriesNextServer + 1);
 					
 					ribbon:
-					  MaxAutoRetries: 0 #最大重试次数，当Eureka中可以找到服务，但是服务连不上时将会重试
-					  MaxAutoRetriesNextServer: 1 #切换实例的重试次数
-					  OkToRetryOnAllOperations: false # 对所有的操作请求都进行重试，如果是get则可以，如果是post,put等操作没有实现幂等的情况下是很危险的，所以设置为false
-					  ConnectTimeout: 1000 #请求连接的超时时间
-					  ReadTimeout: 1800 #请求处理的超时时间
+					  MaxAutoRetries: 0 	#当前服务重试次数。在Eureka中找到服务，服务连不上时将会重试
+					  MaxAutoRetriesNextServer: 1 	#切换服务重试次数
+					  OkToRetryOnAllOperations: false 	#对所有的操作请求都进行重试，如果是get则可以，如果是post,put等操作没有实现幂等的情况下是很危险的，所以设置为false
+					  ConnectTimeout: 1000 	#请求连接的超时时间
+					  ReadTimeout: 1000 	#请求处理的超时时间
 			
 			
 			
@@ -295,7 +295,7 @@ package 微服务;
 					
 			4.配置Hystrix 全局超时时长：(可选)
 					1.配置信息在：	hystrix-core.jar，com.netflix.hystrix中，HystrixCommandProperties类。
-					2.Ribbon的超时时间一定要小于Hystix的超时时间。
+					2.Ribbon超时时长一定要小于Hystix的超时时间，大于Hystrix则重试机制无效。
 					3.Greenwich.SR6版本中，超时多了一个s，为：timeoutInMilliseconds
 					
 					hystrix:
@@ -315,8 +315,8 @@ package 微服务;
 					              
 		5.熔断机制：(默认启用)
 			熔断器三个状态：
-				Closed：所有请求正常访问。
-				Open：所有请求直接降级。进入休眠状态(5秒)，5秒后进入Half Open状态。
+				Closed：	所有请求正常访问。
+				Open：	所有请求直接降级。进入休眠状态(5秒)，5秒后进入Half Open状态。
 				Half Open：此时释放部分请求，若这些请求都未超时，则进入 Closed；否则进入 Open。
 				
 			1.当Hystrix Command请求后端服务数量(默认20次)，失败超过一定比例(默认50%), 断路器会切换到开路状态(Open). 
@@ -338,13 +338,14 @@ package 微服务;
 					    <artifactId>spring-cloud-starter-openfeign</artifactId>
 					</dependency>
 					
-			2.启动类上：添加注解 @EnableFeignClients	--开启Feign
+			2.启动类上：添加注解	@EnableFeignClients		--开启 Feign
+								@SpringCloudApplication		--使用 Eureka、Hystrix、SpringBoot
 					
 			3.创建Feign接口：		(该接口可调用远程方法)
 				1.远程调用4个参数：请求方式、请求URL、传入参数、返回值.
 				2.Feign底层对其动态代理
 				
-					@FeignClient("user-service")	--1.服务名，该注解 将该接口实现类对象注入IOC容器
+					@FeignClient("user-service")	--1.调用的服务名 / 该注解 将该接口实现类对象注入IOC容器
 					public interface UserService {
 					
 					    @GetMapping("/user/{id}")	--2.请求方式、URI
@@ -381,7 +382,7 @@ package 微服务;
 					    
 					    
 		3.Feign中启用 Hystrix熔断：
-			0.启动类：注解 @EnableCircuitBreaker
+			0.启动类：注解 @EnableCircuitBreaker	(@SpringCloudApplication)
 		
 			1.配置文件：
 					feign:
@@ -389,7 +390,7 @@ package 微服务;
 					    enabled: true # 开启Feign的熔断功能
 			
 			
-			2.熔断方法类--实现Feign接口：(作为fallback的处理类)
+			2.熔断方法--实现Feign接口：(作为fallback的处理类)
 			
 					@Component		--注入IOC容器
 					public class UserFeignClientFallback implements UserService {
@@ -412,9 +413,9 @@ package 微服务;
 	------------------------------------------------ 组件五 ------------------------------------------------------------------
 	
 	5. Zuul 网关
-		1.对外提供网关的入口，不暴露服务地址；
+		1.对外：提供网关的入口，不暴露服务地址；
 		2.对客户请求的负载均衡，提供路由映射。
-		3.处理权限校验问题；
+		3.处理权限校验(ZuulFilter)；
 		
 		1.zuul的路由和负载均衡
 			1.导入依赖：(先添加 SpringCloud 版本管理)
@@ -424,7 +425,8 @@ package 微服务;
 					    <artifactId>spring-cloud-starter-netflix-zuul</artifactId>
 					</dependency>
 				
-			2.启动类：添加 @EnableZuulProxy注解，开启Zuul网关
+			2.启动类：添加注解：	@EnableZuulProxy		--开启Zuul网关
+								@SpringCloudApplication		--开启Eureka、Hystrix、SpringBootApplication
 			
 			3.配置：
 					0.基本配置：	server.port	
@@ -432,7 +434,7 @@ package 微服务;
 								eureka.client.service-url.defaultZone
 			
 			
-					0-1.Zuul对所有服务，添加了 默认的路由规则：	user-service: /user-service/**
+					0-1.Zuul对所有服务，添加了 默认的路由规则：	服务名 = 映射路径 
 					
 					zuul:
 					  routes:

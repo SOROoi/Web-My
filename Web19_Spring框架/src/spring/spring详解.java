@@ -170,11 +170,13 @@ package spring;
 			AnnotationConfigApplicationContext：它是用于读取注解创建容器的，是第二天的内容。
 			
 	5.核心容器的两个接口引发出的问题：
-			ApplicationContext: (单例对象适用)(只创建对象一次)
-				它在构建核心容器时，创建对象采取的策略是采用立即加载的方式。也就是说，只要一读取完配置文件马上就创建配置文件中配置的对象。
+			ApplicationContext: (单例对象使用)(只创建对象一次)
+				1.在构建核心容器时，创建对象采用立即加载的方式：实例化 ApplicationContext时，实例化所有配置好的 bean。
+				2.用于加载 Scope = "singleton" 的 bean。
 
 			BeanFactory: (多例对象使用)
-				它在构建核心容器时，创建对象采取的策略是采用延迟加载的方式。也就是说，什么时候根据id获取对象了，什么时候才真正的创建对象。
+				1.在构建核心容器时，创建对象采用延迟加载的方式：实例化 BeanFactory时，容器中的 bean未被实例化。 getBean时，才实例化该 bean。
+				2.用于加载 Scope = "prototype" 的 bean。
 				
  */
 
