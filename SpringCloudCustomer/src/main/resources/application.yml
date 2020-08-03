@@ -8,8 +8,8 @@ spring:
     
 eureka:
   client:
-    register-with-eureka: false # 是否注册自己的信息到EurekaServer，默认是true
-    fetch-registry: false     # 是否拉取其它服务的信息，默认是true
+#    register-with-eureka: false # 是否注册自己的信息到EurekaServer，默认是true
+#    fetch-registry: false     # 是否拉取其它服务的信息，默认是true
     service-url:
       defaultZone: http://127.0.0.1:8888/eureka
     
@@ -28,4 +28,4 @@ hystrix:
         execution:
           isolation:
             thread:
-              timeoutInMilliseconds: 4000 # 设置hystrix的超时时间为6000ms，默认1000ms
+              timeoutInMilliseconds: 10000 # 设置hystrix的超时时间为6000ms，默认1000ms

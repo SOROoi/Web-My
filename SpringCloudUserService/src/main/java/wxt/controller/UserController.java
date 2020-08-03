@@ -18,11 +18,13 @@ public class UserController {
 	
 	@GetMapping("/{id}")
 	public User find(@PathVariable("id") Long id) {
-		try {
-			Thread.sleep(3500l);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(id == 2) {
+			try {
+				Thread.sleep(3500l);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return mapper.selectByPrimaryKey(id);
 	}

@@ -142,15 +142,17 @@ package MySQL数据库;
   									   collate 校对规则1;	  --修改"数据库1"的校对规则为“校对规则1”
   							
  			6.备份数据库
- 				1.备份表中的数据：
-	  				mysqldump -u用户名 -p 数据库1 > 文件名.sql (window命令)
+ 				1.备份库/表中的数据：
+	  				mysqldump -u用户名 -p 数据库1 > g:文件名.sql (window命令)
+                    
+	  				mysqldump -u用户名 -p 数据库1 表1 > g:文件名.sql (window命令)
 				    
 			   	2.恢复tt库：（恢复数据只能恢复表的数据，不能恢复库）
 			   		方式一：
 					  2.1  为恢复库，要先创建库：  create database tt;
 					  2.2  再恢复tt库 ：
 						use tt; 
-						source c:\tt.sql;	    （source:可以执行一个 sql脚本    sql命令）
+						source c:/tt.sql;	    （source:可以执行一个 sql脚本    sql命令）
 					
 					方式二：
 					  2.1  为恢复库，要先创建库：  create database tt;

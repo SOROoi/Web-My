@@ -4,26 +4,47 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /*							AJAX	JQuery写法	
-	客户端
-	 	1.AJAX----Asynchronous Javascript And XML（异步JavaScript和XML）
-	 		用于前端，向服务器发送数据、获取数据。
-	 		
-	 	2.AJAX代码写在script中
-	 	
-	 	3.发送请求(get、post),在其中 处理servlet返回的 json数据
-	 		
-	 		例：
-	 			$.post("CityServlet02",{pid:pid} ,function(data){
-					
-				},"json" );
-					
-					
-				$.get(url, [data], [callback], [type])
-					url：待载入页面的URL地址.
- 					data：待发送 Key/value 参数。
- 					callback：载入成功时回调函数。
- 					type：返回内容的格式，xml, html, script, json, text, _default。
- 
+
+ 	1.AJAX介绍
+		1.AJAX：Asynchronous Javascript And XML（异步JavaScript和XML）
+ 		2.用于何处：前端，与服务器交互数据。
+ 		3.好处：可以局部加载数据，向服务器发送请求。无需加载整个页面。
+
+ 	
+ 	2.JQeury实现方式
+		1. $.ajax()：	//使用$.ajax()发送异步请求
+	            $.ajax({
+	                url:"ajaxServlet1111" ,				// 请求路径
+	                type:"POST" , 						// 请求方式	
+	                data:{"username":"jack","age":23},	// 请求参数
+	                success:function (data) {			// 响应成功后的回调函数(data-响应数据)
+	                    alert(data);
+	                },
+	                error:function () {					// 请求响应出现错误，的回调函数
+	                    alert("出错啦...")
+	                },
+	
+	                dataType:"text"						// 接受到响应数据的格式
+	            });
+	            
+	            
+		2. $.get()：		发送get请求
+			* 语法：$.get(url, [data], [callback], [type])
+				* 参数：
+					* url：请求路径
+					* data：请求参数
+					* callback：回调函数
+					* type：响应结果的类型 xml, html, script, json, text, _default。
+
+		3. $.post()：发送post请求
+			* 语法：$.post(url, [data], [callback], [type])
+				* 参数：
+					* url：请求路径
+					* data：请求参数
+					* callback：回调函数
+					* type：响应结果的类型
+ 		
+
  
  	服务器端
  		1.json数据格式：[
@@ -84,8 +105,9 @@ import net.sf.json.JSONObject;
  
  */
 
-/*							AJAX	JS写法	
- * 	
+
+/*							AJAX	JS原生写法	
+	
 	 1.发送 get请求，并发送数据、获取数据：
 			
 			//1. ajax前置方法，创建 ajax对象

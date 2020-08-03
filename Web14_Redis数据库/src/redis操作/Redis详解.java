@@ -140,8 +140,8 @@ import redis.clients.jedis.Jedis;
 		 )
 		 
 	3.常用命令：
-		redis-server /usr/local/redis/redis.conf 		--启动redis
-		redis-cli shutdown  							--停止redis
+		./redis-server /usr/local/redis/redis.conf 		--启动redis
+		./redis-cli shutdown  							--停止redis
 		ps -ef | grep -i redis							--查看服务是否启动，6379端口
 		
 		/usr/local/redis/bin/redis-cli					--连接本地redis服务器
