@@ -11,6 +11,7 @@ package p1_oracle安装;
 	
 	3.安装流程：
 		见‘ 安装.pdf ’有详细步骤
+		本机未安装，Oracle数据库安装在 VMware软件的虚拟机中。
 	
  */
  

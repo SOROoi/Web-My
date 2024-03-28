@@ -113,8 +113,12 @@ package maven;
 				mvn package				执行compile、test，将项目打包为war文件,存放在target中	  (war文件名称，与pom.xml中配置有关)
 				mvn install 			执行compile、test、package，将项目打包为war文件,发布到本地仓库
 				mvn deploy				将项目打包，发布到私服
-		
-	9.Maven生命周期:
+			
+ 	9.运行项目
+ 		右键项目 ——> Run As ——> Maven Build... ——> 输入tomcat:run 点击run	//运行指定命令(maven项目自带tomcat插件)
+ 		右键项目 ——> Run As ——> Maven Build    ——>						//运行上一次执行的命令
+ 		
+	10.Maven生命周期:
 			1.Clean生命周期
 				Clean
 				
@@ -127,7 +131,7 @@ package maven;
 			4.不同生命周期的命令可以同时执行
 				如：mvn clean package
 				
-	10.依赖范围scope
+	11.依赖范围scope
 	 		scope选项：
 	 			1.Compile：			    编译(compile)时需要，测试时(test)需要，运行时需要(打包时添加该jar)
 	 			2.Provided:			    编译(compile)时需要，测试时(test)需要，运行时不需要(打包时不添加该jar)
@@ -140,7 +144,7 @@ package maven;
 /*							项目构建
 	1.Eclipse前置准备
 	 	1.安装插件：
-	 		eclipse上安装 m2e插件。
+	 		eclipse上安装 m2e插件。然后window ——> preperences ——> maven ——> installations ——> add （添加maven所在目录）
 	 	2.配置maven版本：
 	 		eclipse中，preferences选项下 maven栏下 Installations选项，点击add，添加 Maven 源文件目录。(maven-xx-bin)
 	 	3.绑定maven配置文件
@@ -149,7 +153,7 @@ package maven;
  	2.web项目创建
 	 	1.创建项目	
 	 		eclipse中, new ——> maven project ——> 勾选create a simple project(skip archetype selection-跳过骨架选项)。
-	 		---如果不勾选，则不跳过骨架，创建出的项目目录是不全的	
+	 		---如果不勾选，则只有骨架，创建出的项目目录是不全的	
 	 		
 	 		(非web项目 只进行这一步/并打包为jar 即可)
 	 		
@@ -204,10 +208,7 @@ package maven;
 	 			2.Provided:			    编译(compile)时需要，测试时(test)需要，运行时不需要(打包时不添加该jar)
 	 			3.Runtime 数据库驱动包：编译(compile)时不需要，测试时(test)需要，运行时需要(打包时添加该jar)
 	 			4.Test    junit.jar：  编译(compile)时不需要，测试时(test)需要，运行时不需要(打包时不添加该jar)
-	 		
-	 	7.运行项目
-	 		右键项目 ——> Run As ——> Maven Build... ——> 输入tomcat:run 点击run	//运行指定命令(maven项目自带tomcat插件)
-	 		右键项目 ——> Run As ——> Maven Build    ——>						//运行上一次执行的命令
+	 	
  		
  		
 	3. Maven项目中添加、修改 Tomcat 插件
@@ -227,7 +228,7 @@ package maven;
 /*							第一天总结
  	1.Maven的仓库
 		本地仓库
-		远程仓库（私服）
+		远程仓库（私服/公司服务器）
 		中央仓库
  
  	2.添加依赖
@@ -261,7 +262,7 @@ package maven;
 		 		
 	5.解决依赖传递导致的jar版本冲突
 		1.第一声明优先原则：版本不同的jar，放在前面的jar生效
-		2.路径近者优先原则：自己添加一个需要的jar
+		2.路径近者优先原则：自己添加对应版本的该jar的依赖，而非某个依赖传递过来的该jar
 		3.排除原则：依赖中增加<exclusions>标签排除其中某个jar
 				<dependency>
 			  		<groupId>org.apache.struts</groupId>
@@ -274,7 +275,7 @@ package maven;
 			  		  </exclusion>
 			  		</exclusions>
 			  	</dependency>
-		4.版本锁定原则：增加<dependencyManagement>标签锁定版本
+		4.版本锁定原则：父工程增加<dependencyManagement>标签锁定版本，子工程无需声明版本
 				<properties>
 					<spring.version>4.2.4.RELEASE</spring.version>
 					<hibernate.version>5.0.7.Final</hibernate.version>
@@ -325,7 +326,7 @@ package maven;
 					   hosted  宿主仓库/本地仓库
 					   group
 					   
-		4.配置私服上传地址(见常用配置文件)
+		4.客户端配置私服上传地址(见常用配置文件)
 			1.项目pom.xml中，添加私服地址： <distributionManagement>
 										  	<repository>
 										  		<id>releases</id>

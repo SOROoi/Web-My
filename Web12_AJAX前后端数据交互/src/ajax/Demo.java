@@ -8,18 +8,42 @@ import net.sf.json.JSONObject;
 public class Demo {
 	
 	public static void main(String[] args) {
-//		method1();
+		method1();
 //		method2();
-		method3();
+//		method3();
 		
 	}
 
-	//Object对象无法转为json数据
+	//Object对象无法转为json数据，被转化的对象 其类必须为JavaBean格式，object类不符合
 	private static void method1() {
 		String json = JSONObject.fromObject(new Object() {
 			private String name="A";
-			private String age="16";
+			private int age=16;
 			private String sex="男";
+			
+			public String getName() {
+				return name;
+			}
+
+			public void setName(String name) {
+				this.name = name;
+			}
+
+			public int getAge() {
+				return age;
+			}
+
+			public void setAge(int age) {
+				this.age = age;
+			}
+
+			public String getSex() {
+				return sex;
+			}
+
+			public void setSex(String sex) {
+				this.sex = sex;
+			}
 		}).toString();
 		System.out.println(json);
 	}

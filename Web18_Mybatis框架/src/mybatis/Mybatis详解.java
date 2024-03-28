@@ -3,7 +3,9 @@ package mybatis;
 
 /*							Web18_Mybatis框架（D:\我的资料\黑马57期）
 
- 					
+ 						创建接口和映射配置的sql，Mybatis通过代理模式生成该sql的接口的具体实现类对象
+ 						映射配置文件规定了：类，方法，sql，返回值
+ 						
 						(配置：
 						 1.主配置文件：	数据库信息 driver,url,username,password
 										Mybatis框架扫描的dao包
@@ -119,7 +121,7 @@ package mybatis;
 				目录在创建时：com.itheima.dao是一级目录
 				
 	   (必须)第三个：mybatis的映射配置文件位置 必须和dao接口的包结构相同
-	   (必须)第四个：映射配置文件的mapper标签 namespace属性的取值 必须是dao接口的全限定类名(包.包.类名)
+	   (必须)第四个：映射配置文件.xml的mapper标签 namespace属性的取值 必须是dao接口的全限定类名(包.包.类名)
 	   (必须)第五个：映射配置文件的操作配置（select），id属性的取值必须是dao接口的方法名
 
 		当我们遵从了第三，四，五点之后，我们在开发中就无须再写dao的实现类。
@@ -175,7 +177,7 @@ package mybatis;
 			    </typeAliases>
 			</configuration>
 			
-			注1.这个别名在SQL映射文件中进行使用。
+			注1.这个别名在SQL映射文件xml中进行使用。
 			注2.在引用别名时是不区分大小写的，比如如下代码也能正确得到运行。
 				parameterType="USERinfo"
 				resultType="USERINFo"
@@ -205,8 +207,8 @@ package mybatis;
 		resultType属性： 	    接口方法返回值的类型,全限定类名。
 		parameterType属性：接口方法传入参数的类型,全限定类名。
  		sql中的#{}字符：	代表占位符，相当于原来jdbc部分所学的?，都是用于执行语句时替换实际的数据。 具体的数据是由#{}里面的内容决定的。
- 		#{}中内容的写法： 由于数据类型是基本类型，所以此处可以随意写。
- 		#{}中内容：		可以接收简单类型值或Javabean /pojo 成员变量值
+ 		#{}中内容的写法： 由于此处数据类型是int，所以此处可以随意写。
+ 		#{}中内容：		表示传入简单类型值或Javabean /pojo 成员变量值
  	
  	2.插入数据(映射配置文件)
  		<insert id="saveUser" parameterType="com.itheima.domain.User">
@@ -264,7 +266,7 @@ package mybatis;
 	7.返回数据封装到JavaBean 时，JavaBean 中属性名与数据库中表的列名不相同，解决方案：
 		一、在<mapper>中添加如下配置，在配置sql 时，返回类型使用resultMap 属性：
 			<!-- 配置 查询结果的列名和实体类的属性名的对应关系 -->
-		    <resultMap id="userMap" type="com.itheima.domain.User">	
+		    <resultMap id="userMap" type="com.itheima.domain.User">		//id:映射名称
 		        <!-- 主键字段的对应 -->
 		        <id property="userId" column="id"></id>
 		        <!--非主键字段的对应-->
@@ -343,7 +345,7 @@ package mybatis;
 			SqlSession session = factory.openSession(true);
 
 	3.动态sql
-		动态sql:根据实体类传入参数的不同取值，使用不同的SQL 语句来进行查询。比如在id 如果不为空时可以根据id 查询，如果username 不为空时
+		动态sql:根据实体类不同的传入参数，使用不同的SQL 语句来进行查询。比如在id 如果不为空时可以根据id 查询，如果username 不为空时
 			      还要加入用户名作为条件。这种情况在我们的多条件组合查询中经常会碰到。
 
 		3.1 根据用户信息，查询用户列表
@@ -599,7 +601,7 @@ package mybatis;
 
 /*							延迟加载
 	
-	1.延迟加载：就是在程序需要用到数据时才进行加载，不需要用到数据时就不加载数据。延迟加载也称懒加载.
+	1.延迟加载：就是当查询一个对象时,不会立即加载该对象的所有关联对象,而是在第一次调用该关联对象时再进行加载。。延迟加载也称懒加载.
 	
 	2.一对一实现延迟加载(association)
 		查询账户信息同时查询用户信息。
@@ -749,7 +751,7 @@ package mybatis;
 			例如：商品的库存，银行的汇率，股市的牌价。
 			
 	4.Mybatis中的一级缓存和二级缓存
-		(一级缓存通过接口方法得到的对象地址值相同，二级缓存通过方法得到的对象地址值不同--因为二级缓存是缓存的数据)
+		(一级缓存通过接口方法得到的对象 地址值相同，二级缓存通过方法得到的对象 地址值不同--因为二级缓存是缓存的数据)
 		一级缓存：(无需配置)
 			1.它指的是Mybatis 中SqlSession 对象的缓存。
 			2.当我们执行查询之后，查询的结果会同时存入到SqlSession为我们提供一块区域中。
@@ -763,6 +765,11 @@ package mybatis;
 		
 		二级缓存:(需配置)
 			1.它指的是Mybatis中SqlSessionFactory对象的缓存。由同一个SqlSessionFactory对象创建的SqlSession共享其缓存。
+			当一个会话（Session）执行查询语句时，如果启用了二级缓存并且配置了相应的缓存策略，查询的结果会被缓存到二级缓存中。
+			当其他会话执行相同的查询语句时，MyBatis 会首先尝试从二级缓存中获取结果。如果缓存中存在相同的结果，就会直接返回缓存中的数据，减少了
+			对数据库的查询操作，提高了性能。
+			当有数据发生变化（如更新、插入、删除）时，MyBatis 会自动清空与该数据相关的缓存，以保证缓存数据的一致性。
+			
 			2.二级缓存的使用：
 				第一步：让Mybatis框架支持二级缓存（在SqlMapConfig.xml中配置）：
 							<settings>
@@ -859,7 +866,7 @@ package mybatis;
 			
 						@Result 中属性：
 						id ：是否是主键字段
-						column ：数据库的列名	/当为多表查询时(一对一、一对多)表示传递给另一个select语句的参数
+						column ：数据库的列名	/当为多表查询时(一对一、一对多)表示：将首条sql查询结果中的column列值，作为参数传递给另一个select语句
 						property ：实体类属性名
 						one：多表、一对一查询。使用 @One 注解
 								select :第二个查询的sql。写法为全限定类名+方法名

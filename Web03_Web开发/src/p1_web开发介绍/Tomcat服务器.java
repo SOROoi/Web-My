@@ -54,12 +54,14 @@ package p1_web开发介绍;
 				   www.sina.com		--为主机名
 				   	   sina.com		--为域名
 					
-					
+									--https协议端口为443
+									
+			协议 + 主机名 + 端口 + 路径path + 参数 + 锚点(html文档#)
 	-------------------------------------------------------------------------------------------------------------------				
 	1.访问 确切的服务器资源 顺序： (域名)DNS查找IP ———— IP地址(找到该IP的电脑) ———— 端口号下(找到该电脑下对应port 已启动 的服务器程序) 
 								———— 不同主机名 对应资源
 								
-		主机名(mail.163.com) =	服务器名(mail，代表邮箱服务器) + 域名(163.com)		
+		主机名(mail.163.com) =	子域名(mail，代表邮箱服务器) + 主域名(163.com)		
 	
 	2.一个端口下 可以有多个 Host name。
 	3.一个 Host name代表一个应用服务器。
@@ -83,12 +85,12 @@ package p1_web开发介绍;
 	3.如何将Tomcat服务器默认端口8080 设置为80
 			打开conf包下的server.xml配置文件，将内容<Connector port="8080"中的"8080"改为"80",保存后重启服务器
 					
-	4.Tomcat目录结构
-			见src\WEB开发入门.ppt		( /为正斜线：URL网址中使用 )	
-									( \为反斜线：电脑文件地址中使用\ )
+	4.Tomcat目录结构，体系结构
+			见图片
 			
-	5.虚似目录的映射(通过修改conf下server.xml配置文件)
+	5.虚似目录的映射
 			Web应用开发好后，若想供外界访问，需要把web应用所在目录交给web服务器管理
+			(通过修改conf下server.xml配置文件)
 			
 			映射：使得http://localhost:8080/itcast目录，对应电脑上g:\news目录
 				(使得外界访问http://localhost:8080/itcast/1.html时，实际打开电脑上g:\news\1.html文件)						
@@ -98,7 +100,7 @@ package p1_web开发介绍;
 					2.在</host>标签前加一行，写入<Context path="/itcast" docBase="g:\news"/> (xml需保存为UTF-8编码才有效哦)
 					保存后重启服务器，外界即可访问到/itcast/1.html
 					
-			(方式二：不重启服务器，添加新的对外访问路径/itcast，映射为电脑中g:\news)
+			(不常用：方式二：不重启服务器，添加新的对外访问路径/itcast，映射为电脑中g:\news)
 					1.打开Tomcat文件夹下conf\Catalina\localhost文件夹,
 					2.在其中创建任意XML文件，
 						如 itcast.xml, 此时文件名itcast就成为对外访问路径，
@@ -171,14 +173,14 @@ package p1_web开发介绍;
 			3.重启服务器Tomcat;
 			4.修改Windows本地Hosts文件，将本机IP和www.baidu.com添加进HOST文件中
 			5.在 g:\news目录(web应用目录)中，创建WEB-INF文件夹，在其中创建web.xml文件，
-			    复制conf下web.xml开头21行，结尾8行粘贴至web.xml中，将<welcome-file>标签中内容改为1.html
+			    将<welcome-file>标签中内容改为1.html
 			6.访问http://www.baidu.com 即可。
 			
 			(重点：配置服务器server.xml文件的 	端口号   		--Connector标签 				port
-				  						   	虚拟主机		--Host标签 					name + appBase
-				  						   	虚拟目录映射	--Host标签中添加Context标签	path + docBase   )
+				  						   	主机名映射	--Host标签 					name + appBase
+				  						   	WEB应用映射	--Host标签中Context标签		path + docBase   )
 				  						   	
-			(重点：配置缺省虚拟主机需要配置		虚拟目录映射	--Host标签中添加Context标签	path="" docBase="web应用目录" 
+			(重点：配置缺省虚拟主机需要配置		默认WEB应用映射	--Host标签中Context标签	path="" docBase="web应用目录" 
 			  								web应用目录 	--目录创WEB-INF、web.xml文件	复制头尾并将<welcome-file>标签中内容改为1.html)
 */
 

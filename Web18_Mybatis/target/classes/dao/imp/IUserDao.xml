@@ -3,7 +3,7 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
  
-<!-- 配置 映射哪个文件 --> 
+<!-- 配置 映射的class类名 --> 
 <mapper namespace="dao.imp.IUserDao">
 	
 	<!-- 配置方法:查询所有 -->

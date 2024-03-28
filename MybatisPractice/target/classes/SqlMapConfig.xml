@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration  
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+  
+  <!-- mybatis主配置文件 -->
+  <configuration>
+  
+  	<!-- 引入外部配置文件 -->
+    <properties resource="jdbcConfig.properties"></properties>
+  
+  	<!--使用typeAliases 配置实体类别名，它只能配置bean中类的别名 -->
+    <typeAliases>
+        <package name="bean"></package>
+    </typeAliases>
+    
+  	<!-- 配置环境  default指定默认使用环境为mysql-->
+  	<environments default="mysql">
+  		<!-- 配置 mysql 环境 -->
+  		<environment id="mysql">
+  			<!-- 配置事务的类型 -->
+  			<transactionManager type="JDBC"></transactionManager>
+  			<!-- 配置数据源/连接池 -->
+  			<dataSource type="POOLED">
+  				<!-- 配置连接数据库的4个基本信息 -->
+  				<property name="driver" value="${jdbc.driver}"/>
+  				<property name="url" value="${jdbc.url}"/>
+  				<property name="username" value="${jdbc.username}"/>
+  				<property name="password" value="${jdbc.password}"/>
+  			</dataSource>
+  		</environment>
+  	</environments>
+  	
+    
+  	<!-- 指定映射配置文件的位置，映射配置文件指的是每个dao独立的配置文件
+  		如果是用注解来配置的话，此处应该使用class属性指定被注释的dao全限定类名
+		<mappers>
+  			<mapper class="dao.imp.IUserDao"/>
+  		</mappers>  	 
+  	 -->
+  	<mappers>
+  		<package name="dao.mapper"></package>
+  	</mappers>
+  </configuration>

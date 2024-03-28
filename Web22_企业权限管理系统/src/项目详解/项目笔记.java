@@ -23,7 +23,7 @@ package 项目详解;
 
 		
 		问题：	Oracle中唯一性约束：	CONSTRAINT product UNIQUE (id, productNum) 的含义？
-		含义：	此唯一约束表示，id 和 productNum ，不能都相同。
+		含义：	此唯一约束表示，id 和 productNum ，不能都相同。任意一条不同视作唯一。
 				(唯一性约束指表中一个字段或者多个字段联合起来能够唯一标识一条记录的约束。联合字段中，可以包含空值。)
 
 	2.0.该权限管理系统用户：

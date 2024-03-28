@@ -13,12 +13,13 @@ import java.lang.reflect.Proxy;
  			2.Proxy.newProxyInstance(...)创建 代理对象
  			3.代理对象执行方法即可。
  	
- 	效果：代理对象的所有方法都得到增强。
+ 	效果：代理对象的接口方法都得到增强。
  */
 public class Test {
 
 	public static void main(String[] args) {
 		Cla c = new Cla();
+		//此方法的第二个参数不能直接传入Inter.class,因为需要的参数为Class数组
 		Inter i = (Inter)Proxy.newProxyInstance(c.getClass().getClassLoader(), c.getClass().getInterfaces(), new InvocationHandler() {
 
 			@Override

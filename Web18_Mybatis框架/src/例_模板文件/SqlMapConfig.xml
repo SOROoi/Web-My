@@ -22,12 +22,25 @@
   		</environment>
   	</environments>
   	
-  	<!-- 指定映射配置文件的位置，映射配置文件指的是每个dao独立的配置文件
-  		如果是用注解来配置的话，ci'chu应该使用class属性指定被注释的dao全限定类名
+  	 <!-- 引入映射配置文件 -->
+	<!--    
+	
+	 XML方式引入：	
 		<mappers>
-  			<mapper class="dao.imp.IUserDao"/>
-  		</mappers>  	 
-  	 -->
+	        <mapper resource="com/yhl/mybatis/mapper/UserMapper.xml"/>
+	    </mappers>
+   
+	注解方式引入：如果是用注解来配置的话，此处应该使用class属性  指定被注释的dao全限定类名	
+		<mappers>
+	        <mapper class="com.yhl.mybatis.mapper.UserMapper"/>
+	    </mappers>
+				    
+	扫描有注解的dao包/dao映射配置文件所在位置：
+		<mappers>
+	        <package name="com.itheima.dao"></package>
+	    </mappers>
+						    
+    -->
   	<mappers>
   		<mapper resource="dao/imp/IUserDao.xml"/>
   	</mappers>

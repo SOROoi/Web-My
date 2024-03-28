@@ -2,7 +2,7 @@ package 序列化与反序列化;
 
 import java.net.URLDecoder;
 
-/*			如下对象		方法的默认路径	
+/*		方法的默认路径		如下对象			
 
 		主机资源目录：		response								"/"		加/
 		当前应用目录：		request, Servlet, ServletContext		"/"		加/

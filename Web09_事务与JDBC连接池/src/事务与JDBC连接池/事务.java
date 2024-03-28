@@ -45,10 +45,10 @@ package 事务与JDBC连接池;
             不可重复读: 
 		
 		2.数据库事务的四种隔离级别：
-			serializable：可避免脏读、不可重复读、虚读情况的发生。（事务变为单线程）
-			repeatable read：可避免脏读、不可重复读情况的发生	（重复读取结果相同）
-			read committed：可避免脏读情况发生（可读已提交数据，锁住其他线程的事务）
 			read uncommitted：最低级别，以上情况均无法保证 (可读未提交数据)
+			read committed：可避免脏读情况发生（可读已提交数据，锁住其他线程的事务）
+			repeatable read：可避免脏读、不可重复读情况的发生	（重复读取结果相同）
+			serializable：可避免脏读、不可重复读、虚读情况的发生。（事务变为单线程）
 			
 		3.数据库中设置隔离的语句(数据库中，针对当前会话有效)
 			set session transaction isolation level + 4种隔离级别		//设置当前会话事务隔离级别

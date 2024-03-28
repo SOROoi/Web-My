@@ -112,7 +112,7 @@ package 黑马49期;
 		 )
 		 
 	3.常用命令：
-		redis-server /usr/local/redis/redis.conf 		--启动redis
+		redis-server /usr/local/redis/redis.conf 		--启动redis(需配置/redis/bin到环境变量后才可)
 		redis-cli shutdown  							--停止redis
 		ps -ef | grep -i redis							--查看服务是否启动，6379端口
 		

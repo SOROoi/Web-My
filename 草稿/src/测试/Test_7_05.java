@@ -8,8 +8,8 @@ public class Test_7_05 {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		int[] arr = { 21, 48, 7, 254, 87, 14, 11, 35, 88, 77, 65 };
-//		bubble(arr);
+		int[] arr = { 21, 48, 7, 254,21, 87, 14, 11, 35, 88, 77, 65,21};
+//		bubb le(arr);
 //		select(arr);
 		quick(arr, 0, arr.length - 1);
 		System.out.println(Arrays.toString(arr));
@@ -35,9 +35,14 @@ public class Test_7_05 {
 		return -1;
 	}
 
+	/**
+	 * 快速排序：	(概念见知乎收藏夹)
+	 * 			以数组中最左侧数作为基准元素index，一次排序确定基准元素的位置，并使得元素左侧数都小于等于index,右侧数都大于等于index;
+				再对左右侧分别进行递归，最后达到全部排序的效果
+	 */
 	private static void quick(int[] arr, int left, int right) {
 		// TODO Auto-generated method stub
-		if (left >= right) {
+		if (left >= right) {					//递归出口
 			return;
 		}
 
@@ -47,20 +52,22 @@ public class Test_7_05 {
 		j = right;
 
 		while (i != j) {
-			while (i < j && arr[j] > index) {
+			while (i < j && arr[j] >= index) {		//arr[j]从右往左比较，若大于等于index则不变，否则与arr[i]交换，然后去执行下一段
 				j--;
 			}
-			int tem = arr[i];
+//			int tem = arr[i];
 			arr[i] = arr[j];
-			arr[j] = tem;
+//			arr[j] = tem;
 
-			while (i < j && arr[i] < index) {
+			while (i < j && arr[i] <= index) {		//arr[i]从左往右比较，若小于等于index则不变，否则与arr[j]交换
 				i++;
 			}
-			tem = arr[i];
-			arr[i] = arr[j];
-			arr[j] = tem;
-		}
+			arr[j] = arr[i];
+//			tem = arr[i];
+//			arr[i] = arr[j];
+//			arr[j] = tem;
+		}											
+		arr[i] = index;				//重复上方过程，一次循环结束后index 位于自身位置（即左侧数都小于index,右侧数都大于index）
 		quick(arr, i + 1, right);
 		quick(arr, left, i - 1);
 	}

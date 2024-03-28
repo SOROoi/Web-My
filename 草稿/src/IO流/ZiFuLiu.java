@@ -1,10 +1,12 @@
 package IO流;
 
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
 public class ZiFuLiu {
@@ -14,6 +16,7 @@ public class ZiFuLiu {
 		try {
 			OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(""));
 			BufferedWriter bwriter = new BufferedWriter(new FileWriter(""));
+			
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

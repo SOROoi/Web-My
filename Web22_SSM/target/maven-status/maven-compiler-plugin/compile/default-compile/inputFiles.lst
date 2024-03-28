@@ -28,10 +28,12 @@ G:\JD\JavaWeb工程文件\Web22_SSM\src\main\java\wxt\dao\ILogDao.java
 G:\JD\JavaWeb工程文件\Web22_SSM\src\main\java\wxt\service\imp\RoleService.java
 G:\JD\JavaWeb工程文件\Web22_SSM\src\main\java\wxt\controller\ProductController.java
 G:\JD\JavaWeb工程文件\Web22_SSM\src\main\java\wxt\controller\RoleController.java
+G:\JD\JavaWeb工程文件\Web22_SSM\src\main\java\wxt\service\IMemberService.java
 G:\JD\JavaWeb工程文件\Web22_SSM\src\main\java\wxt\service\IRoleService.java
 G:\JD\JavaWeb工程文件\Web22_SSM\src\main\java\wxt\bean\Traveller.java
 G:\JD\JavaWeb工程文件\Web22_SSM\src\main\java\wxt\util\DateToString.java
 G:\JD\JavaWeb工程文件\Web22_SSM\src\main\java\wxt\service\IUserService.java
 G:\JD\JavaWeb工程文件\Web22_SSM\src\main\java\wxt\bean\SysLog.java
+G:\JD\JavaWeb工程文件\Web22_SSM\src\main\java\wxt\service\imp\MemberService.java
 G:\JD\JavaWeb工程文件\Web22_SSM\src\main\java\wxt\dao\IUserDao.java
 G:\JD\JavaWeb工程文件\Web22_SSM\src\main\java\wxt\service\ILogService.java

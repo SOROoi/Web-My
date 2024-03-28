@@ -24,7 +24,8 @@
   	
   	<!-- 指定映射配置文件的位置，映射配置文件指的是每个dao独立的配置文件
   	
-  		XML方式引入：			<mappers>
+  		XML方式引入：		需要在 MyBatis 的配置文件中配置 <mappers> 标签，并在其内部使用 <mapper> 标签指定映射器的资源路径。	
+  							<mappers>
 						        <mapper resource="com/yhl/mybatis/mapper/UserMapper.xml"/>
 						    </mappers>
   	

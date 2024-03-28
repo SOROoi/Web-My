@@ -10,6 +10,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.URLDecoder;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /*					序列化与反序列化
  	
@@ -27,13 +30,14 @@ public class Test {
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 
 //		serialize(); // 序列化
-//		fanSerializable(); //反序列化
+		fanSerializable(); //反序列化
 	}
 
 	// 序列化方法 将对象序列化至文件中
 	private static void serialize() throws IOException {
 		String path = Test.class.getClassLoader().getResource("").getPath();
-		File file = new File(URLDecoder.decode(path, "UTF-8"), "序列化.ser");
+		System.out.println("path:" + path);
+		File file = new File(URLDecoder.decode(path, "UTF-8"), "序列化与反序列化/序列化.ser");
 		OutputStream out = new FileOutputStream(file);
 		ObjectOutputStream objOut = new ObjectOutputStream(out); // 建立 ObjectOutputStream 序列化对象
 
@@ -42,7 +46,9 @@ public class Test {
 		b.setAge(8);
 
 		objOut.writeObject(b);
+		objOut.flush();
 		System.out.println("序列化完成");
+		objOut.close();
 	}
 
 	// 反序列化方法 将序列化文件转为内存中对象
@@ -53,5 +59,15 @@ public class Test {
 		Object o = objIn.readObject(); // 反序列化，将文件转为内存中对象
 		System.out.println("反序列化完成");
 		System.out.println("获得的对象为：" + o);
+		objIn.close();
+//		InputStream i = Test.class.getClassLoader().getResourceAsStream("prop.properties");
+//		Properties pro = new Properties();
+//		pro.load(in);
+//
+//		for (Map.Entry<Object, Object> entry : pro.entrySet()) {
+//			System.out.println(entry.getKey().toString() + entry.getValue().toString());
+//		}
+//		System.out.println("完成");
+//		i.close();
 	}
 }

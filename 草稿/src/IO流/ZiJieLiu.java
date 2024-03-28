@@ -18,8 +18,9 @@ public class ZiJieLiu {
 
 	public static void main(String[] args) {
 		File file1 = new File("C:\\Users\\asus pc\\Desktop\\1.txt");
-		File file2 = new File("C:\\Users\\asus pc\\Desktop\\2.txt");
-		test1(file1,file2);
+		//java中可直接使用/符号分隔目录，Java运行时环境会自动根据操作系统的不同进行路径分隔符的转换。在Windows系统中，它会将正斜杠（/）转换为反斜杠（\）。
+		File file2 = new File("C:/Users/asus pc/Desktop/2.txt");	
+		test1(file1, file2);
 	}
 
 	// 传入一个源文件和接收文件，复制源文件至接收文件
@@ -29,7 +30,7 @@ public class ZiJieLiu {
 		try {
 			fis = new FileInputStream(src);
 			fos = new FileOutputStream(file);
-
+		
 			int len = 0;
 			byte[] by = new byte[512];
 			while ((len = fis.read(by)) != -1) {

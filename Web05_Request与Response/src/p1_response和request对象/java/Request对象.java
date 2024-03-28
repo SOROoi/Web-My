@@ -55,7 +55,7 @@ package p1_response和request对象.java;
 		1.request对象有getRequestDispatcher方法，返回一个RequestDispatcher对象，调用其forward方法可以实现请求转发。
 			
 			例：	String data = "aaa";
-				resquest.setAttribute("data",data);						//将数据带到转发的url中
+				resquest.setAttribute("data",data);						//将数据绑定到request对象中
 				resquest.getRequestDispatcher(url).forward(request,response);	//请求转发到指定url，执行第二个servlet
 																				(服务器内部跳转url然后将结果发给浏览器)
 																				(url默认web应用下)
@@ -65,7 +65,7 @@ package p1_response和request对象.java;
 		3.特点：	
 				1.发送一次请求
 				2.地址栏不发生变化
-				3.只能定位到服务器资源
+				3.只能定位到同一web应用资源
 		
 		4.request域----域对象转发并传输数据:
 			
